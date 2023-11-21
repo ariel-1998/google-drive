@@ -1,0 +1,25 @@
+.input {
+  padding: 10px;
+  margin: 8px 0;
+  font-size: 1rem;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 300ms, box-shadow 0.3;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.input:hover {
+  border: 1px solid #66bb6a; /* Change color on hover */
+}
+
+.input:focus {
+  outline: none;
+  border: 1px solid #4285f4; /* Change color on focus */
+  box-shadow: 0 0 5px rgba(66, 133, 244, 0.5); /* Add a subtle box shadow */
+}
+
+.input:disabled {
+  background-color: #f2f2f2;
+  color: #666666;
+}

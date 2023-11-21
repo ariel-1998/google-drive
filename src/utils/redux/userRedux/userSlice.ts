@@ -8,6 +8,7 @@ type UserStateObj = {
   user: UserState;
   loading: boolean;
   error: string | null;
+  fulfilled: boolean;
 };
 
 let initialState = {
@@ -46,10 +47,35 @@ const userSlice = createSlice({
     builder.addCase(registerAsync.fulfilled, (state) => {
       handleLoadingAndErrorStates(state, "fulfilled");
     });
+    //reset password
+    builder.addCase(resetPasswordAsync.pending, (state) => {
+      handleLoadingAndErrorStates(state, "pending");
+    }),
+      builder.addCase(resetPasswordAsync.rejected, (state, action) => {
+        handleLoadingAndErrorStates(state, "rejected", action.error.message);
+      });
+    builder.addCase(resetPasswordAsync.fulfilled, (state) => {
+      handleLoadingAndErrorStates(state, "fulfilled");
+    });
+    //update email
+    builder.addCase(updateEmailAsync.pending, (state) => {
+      handleLoadingAndErrorStates(state, "pending");
+    }),
+      builder.addCase(updateEmailAsync.rejected, (state, action) => {
+        handleLoadingAndErrorStates(state, "rejected", action.error.message);
+      });
+    builder.addCase(updateEmailAsync.fulfilled, (state) => {
+      handleLoadingAndErrorStates(state, "fulfilled");
+    });
   },
 });
 
-export const { signInAsync, registerAsync } = userThunks;
+export const {
+  signInAsync,
+  registerAsync,
+  resetPasswordAsync,
+  updateEmailAsync,
+} = userThunks;
 export const { changeUser } = userSlice.actions;
 export default userSlice.reducer;
 
@@ -63,6 +89,7 @@ function handleLoadingAndErrorStates(
     case "pending": {
       state.loading = true;
       state.error = null;
+      state.fulfilled = false;
       break;
     }
     case "rejected": {
@@ -73,6 +100,7 @@ function handleLoadingAndErrorStates(
     case "fulfilled": {
       state.error = null;
       state.loading = false;
+      state.fulfilled = true;
       break;
     }
     default: {

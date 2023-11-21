@@ -1,3 +1,39 @@
-.container {
-  background-color: red;
+.form {
+  border: 1px solid #bbbbbb77;
+  border-radius: 5px;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+  width: 95vw;
+}
+
+.heading {
+  text-align: center;
+  padding: 5px;
+  margin: 0;
+}
+
+.errorHeading {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #ff6347;
+}
+
+.errorMsg {
+  color: #ff6347;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media screen and (max-width: 400px) {
+  .form {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }

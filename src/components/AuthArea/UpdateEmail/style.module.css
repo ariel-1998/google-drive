@@ -16,23 +16,29 @@
 }
 
 .errorHeading {
-  font-size: 1.1rem;
+  color: #ff6347;
+  font-size: 1.25rem;
+  font-weight: bold;
   text-align: center;
-  color: #ff6347;
 }
 
-.errorMsg {
-  color: #ff6347;
+.successHeading {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  color: #66bb6a;
 }
 
-.resetPassword {
-  text-align: end;
+.footerWrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  color: #ff6347;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
 }
 
 @media screen and (max-width: 400px) {
