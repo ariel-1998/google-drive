@@ -1,11 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UserCredentials } from "../../../models/UserCredentials";
 import {
+  EmailAuthProvider,
+  User,
   createUserWithEmailAndPassword,
+  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   updateEmail,
+  updatePassword,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
@@ -40,12 +44,23 @@ class UserThunks {
   );
   updateEmailAsync = createAsyncThunk(
     "user/updateEmailAsync",
-    async (newEmail: string) => {
+    async (email: string) => {
       const { user } = store.getState().user;
       if (!user) throw new Error("User not logged in.");
-      await verifyBeforeUpdateEmail(user, newEmail);
+      await verifyBeforeUpdateEmail(user, email);
     }
   );
+  updatePasswordAsync = createAsyncThunk(
+    "user/updatePasswordAsync",
+    async (password: string) => {
+      const { user } = store.getState().user;
+      if (!user) throw new Error("User not logged in.");
+      await updatePassword(user, password);
+    }
+  );
+  logoutAsync = createAsyncThunk("user/logoutAsync", async () => {
+    await auth.signOut();
+  });
 }
 
 export const userThunks = new UserThunks();

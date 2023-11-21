@@ -4,17 +4,30 @@ import { userThunks } from "./userThunks";
 
 type UserState = User | null;
 
+type Action = { loading: boolean; error: string | null; fulfilled: boolean };
+
 type UserStateObj = {
   user: UserState;
-  loading: boolean;
-  error: string | null;
-  fulfilled: boolean;
+  actions: {
+    login: Action;
+    register: Action;
+    passwordReset: Action;
+    emailUpdate: Action;
+    passwordUpdate: Action;
+    logout: Action;
+  };
 };
 
 let initialState = {
   user: null,
-  loading: false,
-  error: null,
+  actions: {
+    login: { loading: false, error: null, fulfilled: false },
+    register: { loading: false, error: null, fulfilled: false },
+    passwordReset: { loading: false, error: null, fulfilled: false },
+    emailUpdate: { loading: false, error: null, fulfilled: false },
+    passwordUpdate: { loading: false, error: null, fulfilled: false },
+    logout: { loading: false, error: null, fulfilled: false },
+  },
 } as UserStateObj;
 
 const userSlice = createSlice({
@@ -29,43 +42,94 @@ const userSlice = createSlice({
   extraReducers(builder) {
     //Login
     builder.addCase(signInAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending");
+      handleLoadingAndErrorStates(state, "pending", "login");
     }),
       builder.addCase(signInAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(state, "rejected", action.error.message);
+        handleLoadingAndErrorStates(
+          state,
+          "rejected",
+          "login",
+          action.error.message
+        );
       });
     builder.addCase(signInAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled");
+      handleLoadingAndErrorStates(state, "fulfilled", "login");
     });
     //Register
     builder.addCase(registerAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending");
+      handleLoadingAndErrorStates(state, "pending", "register");
     }),
       builder.addCase(registerAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(state, "rejected", action.error.message);
+        handleLoadingAndErrorStates(
+          state,
+          "rejected",
+          "register",
+          action.error.message
+        );
       });
     builder.addCase(registerAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled");
+      handleLoadingAndErrorStates(state, "fulfilled", "register");
     });
     //reset password
     builder.addCase(resetPasswordAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending");
+      handleLoadingAndErrorStates(state, "pending", "passwordReset");
     }),
       builder.addCase(resetPasswordAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(state, "rejected", action.error.message);
+        handleLoadingAndErrorStates(
+          state,
+          "rejected",
+          "passwordReset",
+          action.error.message
+        );
       });
     builder.addCase(resetPasswordAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled");
+      handleLoadingAndErrorStates(state, "fulfilled", "passwordReset");
     });
     //update email
     builder.addCase(updateEmailAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending");
+      handleLoadingAndErrorStates(state, "pending", "emailUpdate");
     }),
       builder.addCase(updateEmailAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(state, "rejected", action.error.message);
+        handleLoadingAndErrorStates(
+          state,
+          "rejected",
+          "emailUpdate",
+          action.error.message
+        );
       });
     builder.addCase(updateEmailAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled");
+      handleLoadingAndErrorStates(state, "fulfilled", "emailUpdate");
+    });
+
+    //update password
+    builder.addCase(updatePasswordAsync.pending, (state) => {
+      handleLoadingAndErrorStates(state, "pending", "passwordUpdate");
+    }),
+      builder.addCase(updatePasswordAsync.rejected, (state, action) => {
+        handleLoadingAndErrorStates(
+          state,
+          "rejected",
+          "passwordUpdate",
+          action.error.message
+        );
+      });
+    builder.addCase(updatePasswordAsync.fulfilled, (state) => {
+      handleLoadingAndErrorStates(state, "fulfilled", "passwordUpdate");
+    });
+    //logout
+    builder.addCase(logoutAsync.pending, (state) => {
+      handleLoadingAndErrorStates(state, "pending", "logout");
+    }),
+      builder.addCase(logoutAsync.rejected, (state, action) => {
+        handleLoadingAndErrorStates(
+          state,
+          "rejected",
+          "logout",
+          action.error.message
+        );
+      });
+    builder.addCase(logoutAsync.fulfilled, (state) => {
+      handleLoadingAndErrorStates(state, "fulfilled", "logout");
     });
   },
 });
@@ -75,37 +139,48 @@ export const {
   registerAsync,
   resetPasswordAsync,
   updateEmailAsync,
+  logoutAsync,
+  updatePasswordAsync,
 } = userThunks;
 export const { changeUser } = userSlice.actions;
 export default userSlice.reducer;
 
 type Status = "pending" | "rejected" | "fulfilled";
+type Method =
+  | "login"
+  | "register"
+  | "passwordReset"
+  | "emailUpdate"
+  | "passwordUpdate"
+  | "logout";
+
 function handleLoadingAndErrorStates(
   state: UserStateObj,
   status: Status,
+  method: Method,
   error?: string
 ) {
   switch (status) {
     case "pending": {
-      state.loading = true;
-      state.error = null;
-      state.fulfilled = false;
+      state.actions[method].loading = true;
+      state.actions[method].error = null;
+      state.actions[method].fulfilled = false;
       break;
     }
     case "rejected": {
-      state.loading = false;
-      state.error = error || "Unknown Error has accured.";
+      state.actions[method].loading = false;
+      state.actions[method].error = error || "Unknown Error has accured.";
       break;
     }
     case "fulfilled": {
-      state.error = null;
-      state.loading = false;
-      state.fulfilled = true;
+      state.actions[method].error = null;
+      state.actions[method].loading = false;
+      state.actions[method].fulfilled = true;
       break;
     }
     default: {
-      state.error = null;
-      state.loading = false;
+      state.actions[method].error = null;
+      state.actions[method].loading = false;
     }
   }
 }

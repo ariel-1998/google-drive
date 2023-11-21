@@ -10,6 +10,7 @@ import ForgotPassword from "./components/AuthArea/ForgotPassword/ForgotPassword"
 import { RootState } from "./utils/redux/store";
 import Layout from "./components/LayoutArea/Layout/Layout";
 import UpdateEmail from "./components/AuthArea/UpdateEmail/UpdateEmail";
+import UpdatePassword from "./components/AuthArea/UpdatePassword/UpdatePassword";
 
 function App() {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function App() {
           <>
             <Route path="update" Component={UnauthLayoutContainer}>
               <Route path="email" Component={UpdateEmail} />
+              <Route path="password" Component={UpdatePassword} />
             </Route>
             <Route Component={Layout}>
               <Route path="/" />

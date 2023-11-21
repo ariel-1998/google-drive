@@ -18,9 +18,12 @@ import ForgotPassword from "../ForgotPassword/ForgotPassword";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { user, error, loading } = useSelector(
-    (state: RootState) => state.user
-  );
+  const {
+    user,
+    actions: {
+      login: { error, loading },
+    },
+  } = useSelector((state: RootState) => state.user);
   const {
     register,
     handleSubmit,

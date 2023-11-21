@@ -1,0 +1,46 @@
+.form {
+  border: 1px solid #bbbbbb77;
+  border-radius: 5px;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+  width: 95vw;
+}
+
+.heading {
+  text-align: center;
+  padding: 5px;
+  margin: 0;
+}
+
+.errorHeading {
+  color: #ff6347;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.successHeading {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  color: #66bb6a;
+}
+
+.errorMsg {
+  color: #ff6347;
+}
+
+.footerWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (max-width: 400px) {
+  .form {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

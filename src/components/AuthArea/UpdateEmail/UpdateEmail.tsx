@@ -12,10 +12,10 @@ const UpdateEmail: React.FC = () => {
   const [error, setError] = useState("");
   const emailRef = useRef<HTMLInputElement | null>(null);
   const {
-    loading,
-    error: userStateError,
-    fulfilled,
     user,
+    actions: {
+      emailUpdate: { loading, fulfilled, error: userStateError },
+    },
   } = useSelector((state: RootState) => state.user);
 
   const submitUpdateEmail = (e: FormEvent<HTMLFormElement>) => {
@@ -41,6 +41,7 @@ const UpdateEmail: React.FC = () => {
       )} */}
       {/* <div>email: {user?.email}</div>
       <div>error: {userStateError}</div> */}
+      <div>user {user?.email}</div>
       {fulfilled && (
         <>
           <div className={styles.successHeading}>Check Mail Box</div>
@@ -52,7 +53,7 @@ const UpdateEmail: React.FC = () => {
       <Input type="text" placeholder="Email..." ref={emailRef} />
       <div className={styles.footerWrapper}>
         <Button theme="primary" type="submit" disabled={loading}>
-          {loading ? <Spinner /> : "Reset Password"}
+          {loading ? <Spinner /> : "Update Email"}
         </Button>
       </div>
     </form>

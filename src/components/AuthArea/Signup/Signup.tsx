@@ -15,9 +15,12 @@ import { RootState } from "../../../utils/redux/store";
 import Spinner from "../../Custom/Spinner/Spinner";
 
 const Signup: React.FC = () => {
-  const { user, loading, error } = useSelector(
-    (state: RootState) => state.user
-  );
+  const {
+    user,
+    actions: {
+      register: { error, loading },
+    },
+  } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const {
     register,
