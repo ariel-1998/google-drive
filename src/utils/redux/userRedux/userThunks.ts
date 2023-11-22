@@ -62,5 +62,5 @@ class UserThunks {
     return await auth.signOut();
   });
 }
-
+console.log("what");
 export const userThunks = new UserThunks();
