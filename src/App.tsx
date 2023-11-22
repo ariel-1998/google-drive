@@ -40,10 +40,10 @@ function App() {
           </Route>
         ) : (
           <>
-            {/* <Route path="/update" Component={UnauthLayoutContainer}>
+            <Route path="/update" Component={UnauthLayoutContainer}>
               <Route path="email" Component={UpdateEmail} />
               <Route path="password" Component={UpdatePassword} />
-            </Route> */}
+            </Route>
             <Route Component={Layout}>
               <Route path="/" Component={Dashboard} />
               <Route path="/folder/:folderId" Component={Dashboard} />

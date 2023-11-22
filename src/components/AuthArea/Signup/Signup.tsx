@@ -18,10 +18,12 @@ const Signup: React.FC = () => {
   const {
     user,
     actions: {
-      register: { error, loading },
+      register: { error, status },
     },
   } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+
+  const loading = status === "pending";
   const {
     register,
     handleSubmit,
@@ -34,10 +36,10 @@ const Signup: React.FC = () => {
     userService.register(data);
   };
 
-  // useEffect(() => {
-  //   if (!user) return;
-  //   navigate("/");
-  // }, [user]);
+  useEffect(() => {
+    if (!user) return;
+    navigate("/");
+  }, [user]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(registerUser)}>

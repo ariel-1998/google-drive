@@ -21,9 +21,12 @@ const Login: React.FC = () => {
   const {
     user,
     actions: {
-      login: { error, loading },
+      login: { error, status },
     },
   } = useSelector((state: RootState) => state.user);
+
+  const loading = status === "pending";
+
   const {
     register,
     handleSubmit,
@@ -35,10 +38,10 @@ const Login: React.FC = () => {
     userService.login({ email: data.email, password: data.password });
   };
 
-  // useEffect(() => {
-  //   if (!user) return;
-  //   navigate("/");
-  // }, [user]);
+  useEffect(() => {
+    if (!user) return;
+    navigate("/");
+  }, [user]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(submitLogin)}>

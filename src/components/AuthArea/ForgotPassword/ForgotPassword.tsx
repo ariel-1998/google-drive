@@ -14,9 +14,13 @@ const ForgotPassword: React.FC = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
   const {
     actions: {
-      passwordReset: { error: userStateError, fulfilled, loading },
+      passwordReset: { status, error: userStateError },
     },
   } = useSelector((state: RootState) => state.user);
+
+  const fulfilled = status === "fulfilled";
+  const loading = status === "pending";
+
   const submitResetPassword = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!emailRef.current) return;

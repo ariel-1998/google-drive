@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styles from "./style.module.css";
 import Input from "../../Custom/Input/Input";
 import Button from "../../Custom/Button/Button";
@@ -14,9 +14,12 @@ const UpdateEmail: React.FC = () => {
   const {
     user,
     actions: {
-      emailUpdate: { loading, fulfilled, error: userStateError },
+      emailUpdate: { status, error: userStateError },
     },
   } = useSelector((state: RootState) => state.user);
+
+  const fulfilled = status === "fulfilled";
+  const loading = status === "pending";
 
   const submitUpdateEmail = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,6 +34,9 @@ const UpdateEmail: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(userStateError);
+  }, [error]);
   return (
     <form className={styles.form} onSubmit={submitUpdateEmail}>
       <h2 className={styles.heading}>Update Email</h2>

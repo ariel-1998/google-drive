@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { foldersThunks } from "./foldersThunks";
 import { FolderModel } from "../../../models/FolderModel";
-import { Action, Status } from "../userRedux/userSlice";
+import { Status, Action } from "../userRedux/userSlice";
 type Path = {
   name: string;
   id: string;
@@ -27,8 +27,8 @@ initialState = {
   currentFolder: null,
   folders: {},
   actions: {
-    addFolder: { loading: false, error: null, fulfilled: false },
-    getFolderChildren: { loading: false, error: null, fulfilled: false },
+    addFolder: { status: "idle", error: null },
+    getFolderChildren: { status: "idle", error: null },
   },
   path: [],
 };
@@ -50,6 +50,10 @@ const foldersSlice = createSlice({
       if (indexToDelete !== -1) {
         state.path.splice(indexToDelete, state.path.length - indexToDelete);
       }
+    },
+    resetAddFolderStatus(state) {
+      state.actions.addFolder.status = "idle";
+      state.actions.addFolder.error = null;
     },
   },
   extraReducers(builder) {
@@ -87,8 +91,12 @@ const foldersSlice = createSlice({
 });
 
 export const { createFolderAsync, getFolderChildrenAsync } = foldersThunks;
-export const { addToPath, removeFromPath, setCurrentFolder } =
-  foldersSlice.actions;
+export const {
+  addToPath,
+  removeFromPath,
+  setCurrentFolder,
+  resetAddFolderStatus,
+} = foldersSlice.actions;
 export default foldersSlice.reducer;
 
 type Method = "addFolder" | "getFolderChildren";
@@ -101,25 +109,23 @@ function handleStateStatus(
 ) {
   switch (status) {
     case "pending": {
-      state.actions[method].loading = true;
+      state.actions[method].status = "pending";
       state.actions[method].error = null;
-      state.actions[method].fulfilled = false;
       break;
     }
     case "rejected": {
-      state.actions[method].loading = false;
+      state.actions[method].status = "rejected";
       state.actions[method].error = error || "Unknown Error has accured.";
       break;
     }
     case "fulfilled": {
+      state.actions[method].status = "fulfilled";
       state.actions[method].error = null;
-      state.actions[method].loading = false;
-      state.actions[method].fulfilled = true;
       break;
     }
     default: {
+      state.actions[method].status = "idle";
       state.actions[method].error = null;
-      state.actions[method].loading = false;
     }
   }
 }

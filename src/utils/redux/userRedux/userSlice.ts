@@ -5,9 +5,8 @@ import { userThunks } from "./userThunks";
 type UserState = User | null;
 
 export type Action = {
-  loading: boolean;
+  status: "pending" | "rejected" | "fulfilled" | "idle";
   error: string | null;
-  fulfilled: boolean;
 };
 
 type UserStateObj = {
@@ -25,13 +24,21 @@ type UserStateObj = {
 let initialState = {
   user: null,
   actions: {
-    login: { loading: false, error: null, fulfilled: false },
-    register: { loading: false, error: null, fulfilled: false },
-    passwordReset: { loading: false, error: null, fulfilled: false },
-    emailUpdate: { loading: false, error: null, fulfilled: false },
-    passwordUpdate: { loading: false, error: null, fulfilled: false },
-    logout: { loading: false, error: null, fulfilled: false },
+    login: { status: "idle", error: null },
+    register: { status: "idle", error: null },
+    passwordReset: { status: "idle", error: null },
+    emailUpdate: { status: "idle", error: null },
+    passwordUpdate: { status: "idle", error: null },
+    logout: { status: "idle", error: null },
   },
+  // actions: {
+  //   login: { loading: false, error: null, fulfilled: false },
+  //   register: { loading: false, error: null, fulfilled: false },
+  //   passwordReset: { loading: false, error: null, fulfilled: false },
+  //   emailUpdate: { loading: false, error: null, fulfilled: false },
+  //   passwordUpdate: { loading: false, error: null, fulfilled: false },
+  //   logout: { loading: false, error: null, fulfilled: false },
+  // },
 } as UserStateObj;
 
 const userSlice = createSlice({
@@ -152,25 +159,23 @@ export function handleStateStatus( //check if i can combine both functions into 
 ) {
   switch (status) {
     case "pending": {
-      state.actions[method].loading = true;
+      state.actions[method].status = "pending";
       state.actions[method].error = null;
-      state.actions[method].fulfilled = false;
       break;
     }
     case "rejected": {
-      state.actions[method].loading = false;
+      state.actions[method].status = "rejected";
       state.actions[method].error = error || "Unknown Error has accured.";
       break;
     }
     case "fulfilled": {
       state.actions[method].error = null;
-      state.actions[method].loading = false;
-      state.actions[method].fulfilled = true;
+      state.actions[method].status = "fulfilled";
       break;
     }
     default: {
       state.actions[method].error = null;
-      state.actions[method].loading = false;
+      state.actions[method].status = "idle";
     }
   }
 }

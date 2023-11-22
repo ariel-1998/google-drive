@@ -16,10 +16,11 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
   const {
     currentFolder,
     actions: {
-      getFolderChildren: { error, fulfilled, loading },
+      getFolderChildren: { error, status },
     },
   } = useSelector((state: RootState) => state.folders);
 
+  const fulfilled = status === "fulfilled";
   useEffect(() => {
     if (!currentFolder && folderId) navigate("/");
     foldersService.getFolderChildren(ROOT_FOLDER);

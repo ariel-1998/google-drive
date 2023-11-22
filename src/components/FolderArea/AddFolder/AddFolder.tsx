@@ -8,10 +8,10 @@ import { RootState } from "../../../utils/redux/store";
 import AddFolderForm from "../AddFolderForm/AddFolderForm";
 
 const AddFolder: React.FC = () => {
-  const { user } = useSelector((state: RootState) => state.user);
-  const AddFolder = (folder: FolderModelWithoutId) => {
-    foldersService.createFolder(folder);
-  };
+  // const { user } = useSelector((state: RootState) => state.user);
+  // const AddFolder = (folder: FolderModelWithoutId) => {
+  //   foldersService.createFolder(folder);
+  // };
   const [open, setOpen] = useState(false);
 
   const openModal = () => setOpen(true);
