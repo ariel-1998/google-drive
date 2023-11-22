@@ -4,7 +4,11 @@ import { userThunks } from "./userThunks";
 
 type UserState = User | null;
 
-type Action = { loading: boolean; error: string | null; fulfilled: boolean };
+export type Action = {
+  loading: boolean;
+  error: string | null;
+  fulfilled: boolean;
+};
 
 type UserStateObj = {
   user: UserState;
@@ -42,40 +46,30 @@ const userSlice = createSlice({
   extraReducers(builder) {
     //Login
     builder.addCase(signInAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending", "login");
+      handleStateStatus(state, "pending", "login");
     }),
       builder.addCase(signInAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(
-          state,
-          "rejected",
-          "login",
-          action.error.message
-        );
+        handleStateStatus(state, "rejected", "login", action.error.message);
       });
     builder.addCase(signInAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled", "login");
+      handleStateStatus(state, "fulfilled", "login");
     });
     //Register
     builder.addCase(registerAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending", "register");
+      handleStateStatus(state, "pending", "register");
     }),
       builder.addCase(registerAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(
-          state,
-          "rejected",
-          "register",
-          action.error.message
-        );
+        handleStateStatus(state, "rejected", "register", action.error.message);
       });
     builder.addCase(registerAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled", "register");
+      handleStateStatus(state, "fulfilled", "register");
     });
     //reset password
     builder.addCase(resetPasswordAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending", "passwordReset");
+      handleStateStatus(state, "pending", "passwordReset");
     }),
       builder.addCase(resetPasswordAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(
+        handleStateStatus(
           state,
           "rejected",
           "passwordReset",
@@ -83,14 +77,14 @@ const userSlice = createSlice({
         );
       });
     builder.addCase(resetPasswordAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled", "passwordReset");
+      handleStateStatus(state, "fulfilled", "passwordReset");
     });
     //update email
     builder.addCase(updateEmailAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending", "emailUpdate");
+      handleStateStatus(state, "pending", "emailUpdate");
     }),
       builder.addCase(updateEmailAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(
+        handleStateStatus(
           state,
           "rejected",
           "emailUpdate",
@@ -98,15 +92,15 @@ const userSlice = createSlice({
         );
       });
     builder.addCase(updateEmailAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled", "emailUpdate");
+      handleStateStatus(state, "fulfilled", "emailUpdate");
     });
 
     //update password
     builder.addCase(updatePasswordAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending", "passwordUpdate");
+      handleStateStatus(state, "pending", "passwordUpdate");
     }),
       builder.addCase(updatePasswordAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(
+        handleStateStatus(
           state,
           "rejected",
           "passwordUpdate",
@@ -114,22 +108,17 @@ const userSlice = createSlice({
         );
       });
     builder.addCase(updatePasswordAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled", "passwordUpdate");
+      handleStateStatus(state, "fulfilled", "passwordUpdate");
     });
     //logout
     builder.addCase(logoutAsync.pending, (state) => {
-      handleLoadingAndErrorStates(state, "pending", "logout");
+      handleStateStatus(state, "pending", "logout");
     }),
       builder.addCase(logoutAsync.rejected, (state, action) => {
-        handleLoadingAndErrorStates(
-          state,
-          "rejected",
-          "logout",
-          action.error.message
-        );
+        handleStateStatus(state, "rejected", "logout", action.error.message);
       });
     builder.addCase(logoutAsync.fulfilled, (state) => {
-      handleLoadingAndErrorStates(state, "fulfilled", "logout");
+      handleStateStatus(state, "fulfilled", "logout");
     });
   },
 });
@@ -145,7 +134,7 @@ export const {
 export const { changeUser } = userSlice.actions;
 export default userSlice.reducer;
 
-type Status = "pending" | "rejected" | "fulfilled";
+export type Status = "pending" | "rejected" | "fulfilled";
 type Method =
   | "login"
   | "register"
@@ -154,7 +143,8 @@ type Method =
   | "passwordUpdate"
   | "logout";
 
-function handleLoadingAndErrorStates(
+export function handleStateStatus( //check if i can combine both functions into 1 in both slices
+  // state.actions: T  instead of state
   state: UserStateObj,
   status: Status,
   method: Method,

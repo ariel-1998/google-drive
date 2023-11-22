@@ -19,7 +19,7 @@ class UserThunks {
   registerAsync = createAsyncThunk(
     "user/registerAsync",
     async (credentials: UserCredentials) => {
-      await createUserWithEmailAndPassword(
+      return await createUserWithEmailAndPassword(
         auth,
         credentials.email,
         credentials.password
@@ -29,7 +29,7 @@ class UserThunks {
   signInAsync = createAsyncThunk(
     "user/signInAsync",
     async (credentials: UserCredentials) => {
-      await signInWithEmailAndPassword(
+      return await signInWithEmailAndPassword(
         auth,
         credentials.email,
         credentials.password
@@ -39,7 +39,7 @@ class UserThunks {
   resetPasswordAsync = createAsyncThunk(
     "user/resetPasswordAsync",
     async (email: string) => {
-      await sendPasswordResetEmail(auth, email);
+      return await sendPasswordResetEmail(auth, email);
     }
   );
   updateEmailAsync = createAsyncThunk(
@@ -47,7 +47,7 @@ class UserThunks {
     async (email: string) => {
       const { user } = store.getState().user;
       if (!user) throw new Error("User not logged in.");
-      await verifyBeforeUpdateEmail(user, email);
+      return await verifyBeforeUpdateEmail(user, email);
     }
   );
   updatePasswordAsync = createAsyncThunk(
@@ -55,11 +55,11 @@ class UserThunks {
     async (password: string) => {
       const { user } = store.getState().user;
       if (!user) throw new Error("User not logged in.");
-      await updatePassword(user, password);
+      return await updatePassword(user, password);
     }
   );
   logoutAsync = createAsyncThunk("user/logoutAsync", async () => {
-    await auth.signOut();
+    return await auth.signOut();
   });
 }
 
