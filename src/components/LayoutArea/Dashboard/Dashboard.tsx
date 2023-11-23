@@ -3,6 +3,7 @@ import AddFolder from "../../FolderArea/AddFolder/AddFolder";
 import AddFile from "../../FileArea/AddFile/AddFile";
 import { useParams } from "react-router-dom";
 import FolderChildren from "../../FolderArea/FolderChildren/FolderChildren";
+import FolderPath from "../../FolderArea/FolderPath/FolderPath";
 
 const Dashboard: React.FC = () => {
   const { folderId } = useParams();
@@ -12,8 +13,9 @@ const Dashboard: React.FC = () => {
       <AddFolder />
       <br />
       <AddFile />
-
-      <FolderChildren folderId={folderId || "null"} />
+      <br />
+      <br />
+      <FolderChildren folderId={folderId || ""} />
     </div>
   );
 };

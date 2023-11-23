@@ -14,9 +14,8 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const setFolder = () => {
-    dispatch(setCurrentFolder(folder));
     navigate(`/folder/${folder.id}`);
-    console.log(folder.name);
+    dispatch(setCurrentFolder(folder));
   };
   return (
     <div onClick={setFolder} className={styles.folder}>

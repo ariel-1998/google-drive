@@ -2,23 +2,19 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { foldersThunks } from "./foldersThunks";
 import { FolderModel } from "../../../models/FolderModel";
 import { Status, Action } from "../userRedux/userSlice";
-type Path = {
-  name: string;
-  id: string;
-};
 
 export const ROOT_FOLDER: FolderModel = {
-  id: "null",
+  id: "",
   name: "Root",
   parentId: null,
   children: [],
+  path: [],
 };
 
 type FolderStateType = {
   folders: Record<string, FolderModel>;
   actions: Record<Method, Action>;
   currentFolder: FolderModel | null;
-  path: Path[];
 };
 
 let initialState: FolderStateType;
@@ -30,26 +26,14 @@ initialState = {
     addFolder: { status: "idle", error: null },
     getFolderChildren: { status: "idle", error: null },
   },
-  path: [],
 };
 
 const foldersSlice = createSlice({
   name: "files",
   initialState,
   reducers: {
-    addToPath(state, action: PayloadAction<FolderModel>) {
-      const { name, id } = action.payload;
-      state.path.push({ name, id });
-    },
     setCurrentFolder(state, action: PayloadAction<FolderModel>) {
       state.currentFolder = action.payload;
-    },
-    removeFromPath(state, action: PayloadAction<FolderModel>) {
-      const { id } = action.payload;
-      let indexToDelete = state.path.findIndex((item) => item.id === id);
-      if (indexToDelete !== -1) {
-        state.path.splice(indexToDelete, state.path.length - indexToDelete);
-      }
     },
     resetAddFolderStatus(state) {
       state.actions.addFolder.status = "idle";
@@ -68,6 +52,7 @@ const foldersSlice = createSlice({
       handleStateStatus(state, "fulfilled", "addFolder");
       const { payload } = action;
       state.folders[payload.id] = payload;
+      state.currentFolder?.children?.push(payload);
     });
     //getFolderChildren
     builder.addCase(getFolderChildrenAsync.pending, (state) => {
@@ -82,21 +67,19 @@ const foldersSlice = createSlice({
       );
     });
     builder.addCase(getFolderChildrenAsync.fulfilled, (state, action) => {
+      console.log("payload");
+      console.log("fulfilled");
       const { payload } = action;
       handleStateStatus(state, "fulfilled", "getFolderChildren");
-      if (!!payload) state.folders[payload.id] = payload;
+      state.folders[payload.id] = payload;
       state.currentFolder = payload;
     });
   },
 });
 
-export const { createFolderAsync, getFolderChildrenAsync } = foldersThunks;
-export const {
-  addToPath,
-  removeFromPath,
-  setCurrentFolder,
-  resetAddFolderStatus,
-} = foldersSlice.actions;
+export const { createFolderAsync, getFolderChildrenAsync, getFolderAsync } =
+  foldersThunks;
+export const { setCurrentFolder, resetAddFolderStatus } = foldersSlice.actions;
 export default foldersSlice.reducer;
 
 type Method = "addFolder" | "getFolderChildren";

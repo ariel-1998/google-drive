@@ -16,9 +16,12 @@ type PasswordResetType = z.infer<typeof updatePasswordSchema>;
 const UpdatePassword: React.FC = () => {
   const {
     actions: {
-      passwordUpdate: { loading, fulfilled, error },
+      passwordUpdate: { status, error },
     },
   } = useSelector((state: RootState) => state.user);
+
+  const loading = status === "pending";
+  const fulfilled = status === "fulfilled";
 
   const {
     register,

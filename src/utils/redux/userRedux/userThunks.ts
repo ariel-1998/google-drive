@@ -1,14 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UserCredentials } from "../../../models/UserCredentials";
 import {
-  EmailAuthProvider,
-  User,
   createUserWithEmailAndPassword,
-  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signOut,
-  updateEmail,
   updatePassword,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";

@@ -11,6 +11,7 @@ const Header: React.FC = () => {
       <Link to={"/update/password"}>updatePassword</Link>
       <Logout /> */}
       <div>Home</div>
+      <Logout />
       <select>
         <option>Profile</option>
         <option>UpdateEmail</option>

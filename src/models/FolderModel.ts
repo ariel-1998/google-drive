@@ -5,8 +5,13 @@ export type FolderModel = {
   id: string;
   createdAt?: FieldValue;
   name: string;
-  children: FolderModel[] | FileModel[];
+  children?: FolderModel[];
   parentId: string | null;
   userId?: string;
+  path: Path[];
+};
+export type Path = {
+  name: string;
+  id: string;
 };
 export type FolderModelWithoutId = Omit<FolderModel, "id">;

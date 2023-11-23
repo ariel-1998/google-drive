@@ -5,7 +5,11 @@ import Spinner from "../../Custom/Spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import { foldersService } from "../../../services/foldersService";
-import { FolderModelWithoutId } from "../../../models/FolderModel";
+import {
+  FolderModel,
+  FolderModelWithoutId,
+  Path,
+} from "../../../models/FolderModel";
 import Input from "../../Custom/Input/Input";
 import { useParams } from "react-router-dom";
 import { resetAddFolderStatus } from "../../../utils/redux/filesRedux/foldersSlice";
@@ -18,31 +22,51 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
   const { error: serverError, status } = useSelector(
     (state: RootState) => state.folders.actions.addFolder
   );
+  const { currentFolder } = useSelector((state: RootState) => state.folders);
   const { user } = useSelector((state: RootState) => state.user);
-  const { folderId: parentId } = useParams();
+  // const { folderId: parentId } = useParams();
   const folderNameRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const submitCreateFolder = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!folderNameRef.current || !user?.uid) return;
-    const folderName = folderNameRef.current.value;
-    if (!folderName.trim()) return setError("Folder Name is Required.");
-    setError("");
-    const newFolder: FolderModelWithoutId = {
-      children: [],
-      name: folderName,
-      parentId: parentId || "null",
-      userId: user.uid,
-    };
-    foldersService.createFolder(newFolder);
-  };
 
   const fulfilled = status === "fulfilled";
   const loading = status === "pending";
 
+  const submitCreateFolder = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!folderNameRef.current || !user?.uid || !currentFolder) return;
+
+    const folderName = folderNameRef.current.value;
+
+    if (!folderName.trim()) return setError("Folder Name is Required.");
+    setError("");
+
+    const newFolder = createFolder(currentFolder, folderName, user.uid);
+    foldersService.createFolder(newFolder);
+  };
+
+  function createFolder(
+    currentFolder: FolderModel,
+    folderName: string,
+    userId: string
+  ) {
+    const pathToAdd: Path = { name: currentFolder.name, id: currentFolder.id };
+
+    const newPath = currentFolder?.path
+      ? [...currentFolder.path, pathToAdd]
+      : [pathToAdd];
+
+    const newFolder: FolderModelWithoutId = {
+      children: [],
+      name: folderName,
+      parentId: currentFolder.id,
+      userId: userId,
+      path: newPath,
+    };
+    return newFolder;
+  }
+
   useEffect(() => {
-    console.log(status);
     if (fulfilled) closeModal();
     return () => {
       dispatch(resetAddFolderStatus());

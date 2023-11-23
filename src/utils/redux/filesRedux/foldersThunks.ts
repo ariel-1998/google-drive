@@ -1,8 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { FolderModel, FolderModelWithoutId } from "../../../models/FolderModel";
-import { dbCollectionRefs } from "../../firebaseConfig";
+import { db, dbCollectionRefs } from "../../firebaseConfig";
 import {
   addDoc,
+  collection,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -12,6 +15,28 @@ import {
 import { store } from "../store";
 
 class FoldersThunks {
+  private async getFolderChildren(folder: FolderModel) {
+    const userId = store.getState().user.user?.uid;
+    //check if folder is cached before requesting with an api call
+
+    /////////////////////////check if i need current folder condition ////////// i almost cetain it not needed
+
+    //if not exist then we query the folder children
+    const q = query(
+      dbCollectionRefs.folders,
+      where("userId", "==", userId),
+      where("parentId", "==", folder.id),
+      orderBy("createdAt")
+    );
+    const querySnapshot = await getDocs(q);
+    return {
+      ...folder,
+      children: querySnapshot.docs.map((doc) => ({
+        ...(doc.data() as FolderModel),
+        id: doc.id,
+      })),
+    };
+  }
   createFolderAsync = createAsyncThunk(
     "files/createFolderAsync",
     async (folder: FolderModelWithoutId) => {
@@ -27,30 +52,61 @@ class FoldersThunks {
   getFolderChildrenAsync = createAsyncThunk(
     "files/getFolderChildrenAsync",
     async (folder: FolderModel) => {
-      const userId = store.getState().user.user?.uid;
-      if (!userId) throw new Error();
-
-      //check if folder is cached before requesting with an api call
-      const { folders, currentFolder } = store.getState().folders;
+      console.log(folder);
+      const { folders } = store.getState().folders;
       const cachedFolder = folders[folder.id];
-      if (cachedFolder && currentFolder) return cachedFolder;
-      //if not exist then we query the folder children
-      const q = query(
-        dbCollectionRefs.folders,
-        where("userId", "==", userId),
-        where("parentId", "==", folder.id || "null"),
-        orderBy("createdAt")
-      );
-      const querySnapshot = await getDocs(q);
-      return {
-        ...folder,
-        children: querySnapshot.docs.map((doc) => ({
-          ...(doc.data() as FolderModel),
-          id: doc.id,
-        })),
-      };
+      if (cachedFolder) return cachedFolder;
+      return await this.getFolderChildren(folder);
     }
   );
+
+  getFolderAsync = createAsyncThunk(
+    "files/getFolderChildrenAsync",
+    async (folderId: string) => {
+      //i might add function that if there is no uid the logout the user with message token expired
+      const userId = store.getState().user.user?.uid;
+
+      const { folders } = store.getState().folders;
+      const cachedFolder = folders[folderId];
+      if (cachedFolder) return cachedFolder;
+
+      const docRe = dbCollectionRefs.folersDocRef(folderId);
+
+      const querySnapshot = await getDoc(docRe);
+      if (!querySnapshot.exists()) throw new Error();
+
+      const data = querySnapshot.data() as FolderModel;
+      if (data.userId !== userId) throw new Error();
+      const folder = { ...data, id: querySnapshot.id };
+      return await this.getFolderChildren(folder);
+    }
+  );
+
+  // deleteFolder = createAsyncThunk(
+  //   "files/getFolderChildrenAsync",
+  //   async (folder: FolderModel) => {
+  //     const userId = store.getState().user.user?.uid;
+  //     //check if folder is cached before requesting with an api call
+  //     const { folders, currentFolder } = store.getState().folders;
+  //     const cachedFolder = folders[folder.id];
+  //     if (cachedFolder && currentFolder) return cachedFolder;
+  //     //if not exist then we query the folder children
+  //     const q = query(
+  //       dbCollectionRefs.folders,
+  //       where("userId", "==", userId),
+  //       where("parentId", "==", folder.id || "null"),
+  //       orderBy("createdAt")
+  //     );
+  //     const querySnapshot = await getDocs(q);
+  //     return {
+  //       ...folder,
+  //       children: querySnapshot.docs.map((doc) => ({
+  //         ...(doc.data() as FolderModel),
+  //         id: doc.id,
+  //       })),
+  //     };
+  //   }
+  // );
 }
 
 export const foldersThunks = new FoldersThunks();
