@@ -1,10 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { FolderModel, FolderModelWithoutId } from "../../../models/FolderModel";
-import { db, dbCollectionRefs } from "../../firebaseConfig";
+import { dbCollectionRefs } from "../../firebaseConfig";
 import {
   addDoc,
-  collection,
-  doc,
   getDoc,
   getDocs,
   orderBy,
@@ -17,11 +15,7 @@ import { store } from "../store";
 class FoldersThunks {
   private async getFolderChildren(folder: FolderModel) {
     const userId = store.getState().user.user?.uid;
-    //check if folder is cached before requesting with an api call
 
-    /////////////////////////check if i need current folder condition ////////// i almost cetain it not needed
-
-    //if not exist then we query the folder children
     const q = query(
       dbCollectionRefs.folders,
       where("userId", "==", userId),
@@ -52,10 +46,6 @@ class FoldersThunks {
   getFolderChildrenAsync = createAsyncThunk(
     "files/getFolderChildrenAsync",
     async (folder: FolderModel) => {
-      console.log(folder);
-      const { folders } = store.getState().folders;
-      const cachedFolder = folders[folder.id];
-      if (cachedFolder) return cachedFolder;
       return await this.getFolderChildren(folder);
     }
   );
@@ -66,13 +56,9 @@ class FoldersThunks {
       //i might add function that if there is no uid the logout the user with message token expired
       const userId = store.getState().user.user?.uid;
 
-      const { folders } = store.getState().folders;
-      const cachedFolder = folders[folderId];
-      if (cachedFolder) return cachedFolder;
+      const docRef = dbCollectionRefs.folersDocRef(folderId);
 
-      const docRe = dbCollectionRefs.folersDocRef(folderId);
-
-      const querySnapshot = await getDoc(docRe);
+      const querySnapshot = await getDoc(docRef);
       if (!querySnapshot.exists()) throw new Error();
 
       const data = querySnapshot.data() as FolderModel;

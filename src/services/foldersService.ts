@@ -3,6 +3,7 @@ import {
   createFolderAsync,
   getFolderAsync,
   getFolderChildrenAsync,
+  setCurrentFolder,
 } from "../utils/redux/filesRedux/foldersSlice";
 import { store } from "../utils/redux/store";
 
@@ -12,9 +13,15 @@ class FoldersService {
   }
 
   getFolderChildren(folder: FolderModel) {
+    const { folders } = store.getState().folders;
+    const cachedFolder = folders[folder.id];
+    if (cachedFolder) return store.dispatch(setCurrentFolder(cachedFolder));
     store.dispatch(getFolderChildrenAsync(folder));
   }
   getFolder(folderId: string) {
+    const { folders } = store.getState().folders;
+    const cachedFolder = folders[folderId];
+    if (cachedFolder) return store.dispatch(setCurrentFolder(cachedFolder));
     store.dispatch(getFolderAsync(folderId));
   }
 }

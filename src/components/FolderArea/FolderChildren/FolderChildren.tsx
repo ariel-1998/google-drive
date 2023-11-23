@@ -5,21 +5,17 @@ import { RootState } from "../../../utils/redux/store";
 import { useSelector } from "react-redux";
 import { foldersService } from "../../../services/foldersService";
 import { ROOT_FOLDER } from "../../../utils/redux/filesRedux/foldersSlice";
-import { useNavigate } from "react-router-dom";
-import FolderPath from "../FolderPath/FolderPath";
+import { useParams } from "react-router-dom";
 
 type FolderChildrenProps = {
   folderId: string;
 };
 
 const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
-  const {
-    currentFolder,
-    actions: {
-      getFolderChildren: { error, status },
-    },
-  } = useSelector((state: RootState) => state.folders);
-
+  const { currentFolder } = useSelector((state: RootState) => state.folders);
+  const { status, error } = useSelector(
+    (state: RootState) => state.folders.actions.getFolderChildren
+  );
   const fulfilled = status === "fulfilled";
 
   useEffect(() => {
@@ -36,8 +32,6 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
 
   return (
     <div>
-      <FolderPath />
-
       {fulfilled &&
         currentFolder?.children?.map((child) => (
           //need to check if file then return file

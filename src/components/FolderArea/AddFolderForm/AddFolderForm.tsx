@@ -19,14 +19,15 @@ type AddFolderFormProps = {
 };
 
 const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
+  const folderNameRef = useRef<HTMLInputElement | null>(null);
+  const [error, setError] = useState("");
+
+  const { user } = useSelector((state: RootState) => state.user);
   const { error: serverError, status } = useSelector(
     (state: RootState) => state.folders.actions.addFolder
   );
   const { currentFolder } = useSelector((state: RootState) => state.folders);
-  const { user } = useSelector((state: RootState) => state.user);
-  // const { folderId: parentId } = useParams();
-  const folderNameRef = useRef<HTMLInputElement | null>(null);
-  const [error, setError] = useState("");
+
   const dispatch = useDispatch();
 
   const fulfilled = status === "fulfilled";
@@ -35,12 +36,9 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
   const submitCreateFolder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!folderNameRef.current || !user?.uid || !currentFolder) return;
-
     const folderName = folderNameRef.current.value;
-
     if (!folderName.trim()) return setError("Folder Name is Required.");
     setError("");
-
     const newFolder = createFolder(currentFolder, folderName, user.uid);
     foldersService.createFolder(newFolder);
   };
@@ -83,7 +81,6 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
         </div>
       )}
       <Input type="text" placeholder="Folder Name..." ref={folderNameRef} />
-
       <Button theme="primary" type="submit" disabled={loading}>
         {loading ? <Spinner /> : "Create"}
       </Button>

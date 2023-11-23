@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { foldersThunks } from "./foldersThunks";
-import { FolderModel } from "../../../models/FolderModel";
+import { FolderModel, Path } from "../../../models/FolderModel";
 import { Status, Action } from "../userRedux/userSlice";
 
 export const ROOT_FOLDER: FolderModel = {
@@ -15,18 +15,18 @@ type FolderStateType = {
   folders: Record<string, FolderModel>;
   actions: Record<Method, Action>;
   currentFolder: FolderModel | null;
+  path: Path[];
 };
 
-let initialState: FolderStateType;
-
-initialState = {
+const initialState = {
   currentFolder: null,
   folders: {},
   actions: {
     addFolder: { status: "idle", error: null },
     getFolderChildren: { status: "idle", error: null },
   },
-};
+  path: [],
+} as FolderStateType;
 
 const foldersSlice = createSlice({
   name: "files",
@@ -38,6 +38,9 @@ const foldersSlice = createSlice({
     resetAddFolderStatus(state) {
       state.actions.addFolder.status = "idle";
       state.actions.addFolder.error = null;
+    },
+    setPath(state, action: PayloadAction<Path[]>) {
+      state.path = action.payload;
     },
   },
   extraReducers(builder) {
@@ -79,7 +82,8 @@ const foldersSlice = createSlice({
 
 export const { createFolderAsync, getFolderChildrenAsync, getFolderAsync } =
   foldersThunks;
-export const { setCurrentFolder, resetAddFolderStatus } = foldersSlice.actions;
+export const { setCurrentFolder, resetAddFolderStatus, setPath } =
+  foldersSlice.actions;
 export default foldersSlice.reducer;
 
 type Method = "addFolder" | "getFolderChildren";
