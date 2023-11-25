@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import {
   setCurrentFolder,
   setPath,
-} from "../../../utils/redux/filesRedux/foldersSlice";
+} from "../../../utils/redux/foldersRedux/foldersSlice";
 
 type FolderProps = {
   folder: FolderModel;
@@ -30,8 +30,11 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
 
   return (
     <div onClick={setFolder} className={styles.folder}>
-      <FaFolder />
-      {folder?.id}
+      <i className={styles.icon}>
+        <FaFolder />
+      </i>
+      {/** need to limit string length to and add dots instead */}
+      {folder.name}
     </div>
   );
 };

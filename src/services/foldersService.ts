@@ -4,7 +4,7 @@ import {
   getFolderAsync,
   getFolderChildrenAsync,
   setCurrentFolder,
-} from "../utils/redux/filesRedux/foldersSlice";
+} from "../utils/redux/foldersRedux/foldersSlice";
 import { store } from "../utils/redux/store";
 
 class FoldersService {

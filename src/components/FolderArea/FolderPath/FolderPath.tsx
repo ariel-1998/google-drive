@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ROOT_FOLDER,
   setPath,
-} from "../../../utils/redux/filesRedux/foldersSlice";
+} from "../../../utils/redux/foldersRedux/foldersSlice";
+import styles from "./style.module.css";
 
 type FolderPathProps = {
   folderId: string;
 };
+
 const FolderPath: React.FC<FolderPathProps> = ({ folderId }) => {
   const { path, currentFolder } = useSelector(
     (state: RootState) => state.folders
@@ -34,22 +36,33 @@ const FolderPath: React.FC<FolderPathProps> = ({ folderId }) => {
       dispatch(setPath([...path, { id, name }]));
     }
   }, [currentFolder]);
+
   return (
-    <div>
+    <div className={styles.breadCrumbsContainer}>
       {
         <>
           {path?.map((p, i) => {
             if (i !== path.length - 1) {
               return (
-                <button
-                  onClick={() => navigateAndSetNewPath(i, p.id)}
-                  key={p.id}
-                >
-                  {p.name}/
-                </button>
+                <div key={p.id} className={styles.breadCrumbSpan}>
+                  <span
+                    className={styles.breadCrumb}
+                    onClick={() => navigateAndSetNewPath(i, p.id)}
+                  >
+                    {/** need to limit string length to and add dots instead */}
+
+                    {p.name}
+                  </span>
+                  <span>/</span>
+                </div>
               );
             }
-            return <span key={p.id}>{p?.name}</span>;
+            return (
+              <span key={p.id}>
+                {/** need to limit string length to and add dots instead */}
+                {p?.name}
+              </span>
+            );
           })}
         </>
       }

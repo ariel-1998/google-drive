@@ -9,6 +9,7 @@ export const ROOT_FOLDER: FolderModel = {
   parentId: null,
   children: [],
   path: [],
+  userId: null,
 };
 
 type FolderStateType = {

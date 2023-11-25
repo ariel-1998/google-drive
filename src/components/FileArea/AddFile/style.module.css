@@ -16,3 +16,7 @@
   background-color: #12b81a55;
   color: #09a011;
 }
+
+.input {
+  display: none;
+}

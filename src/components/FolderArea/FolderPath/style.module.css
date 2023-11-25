@@ -1,0 +1,12 @@
+.breadCrumbsContainer,
+.breadCrumbSpan {
+  display: flex;
+  gap: 10px;
+  font-size: 1.1rem;
+  cursor: default;
+}
+
+.breadCrumb {
+  color: rgb(19, 145, 195);
+  cursor: pointer;
+}

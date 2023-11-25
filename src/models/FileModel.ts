@@ -3,4 +3,5 @@ export type FileModel = {
   name: string;
   parentId: string;
   userId?: string;
+  url: string;
 };

@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./userRedux/userSlice";
-import foldersSlice from "./filesRedux/foldersSlice";
+import foldersSlice from "./foldersRedux/foldersSlice";
 
 export const store = configureStore({
   reducer: {

@@ -4,8 +4,9 @@ import Folder from "../Folder/Folder";
 import { RootState } from "../../../utils/redux/store";
 import { useSelector } from "react-redux";
 import { foldersService } from "../../../services/foldersService";
-import { ROOT_FOLDER } from "../../../utils/redux/filesRedux/foldersSlice";
+import { ROOT_FOLDER } from "../../../utils/redux/foldersRedux/foldersSlice";
 import { useParams } from "react-router-dom";
+import styles from "./style.module.css";
 
 type FolderChildrenProps = {
   folderId: string;
@@ -31,11 +32,11 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
   }, [folderId]);
 
   return (
-    <div>
+    <div className={styles.foldersContainer}>
       {fulfilled &&
-        currentFolder?.children?.map((child) => (
+        currentFolder?.children.map((child) => (
           //need to check if file then return file
-          <Folder key={child.id} folder={child as FolderModel} />
+          <Folder key={child.id} folder={child} />
         ))}
     </div>
   );

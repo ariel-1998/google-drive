@@ -54,7 +54,7 @@ class FoldersThunks {
     "files/getFolderChildrenAsync",
     async (folderId: string) => {
       //i might add function that if there is no uid the logout the user with message token expired
-      const userId = store.getState().user.user?.uid;
+      // const userId = store.getState().user.user?.uid;
 
       const docRef = dbCollectionRefs.folersDocRef(folderId);
 
@@ -62,7 +62,7 @@ class FoldersThunks {
       if (!querySnapshot.exists()) throw new Error();
 
       const data = querySnapshot.data() as FolderModel;
-      if (data.userId !== userId) throw new Error();
+      // if (data.userId !== userId) throw new Error();
       const folder = { ...data, id: querySnapshot.id };
       return await this.getFolderChildren(folder);
     }
