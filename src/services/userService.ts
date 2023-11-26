@@ -7,6 +7,8 @@ import {
   signInAsync,
   updateEmailAsync,
   updatePasswordAsync,
+  updateProfileImageAsync,
+  updateProfileNameAsync,
 } from "../utils/redux/userRedux/userSlice";
 
 class UserService {
@@ -32,6 +34,14 @@ class UserService {
 
   updatePassword(password: string) {
     store.dispatch(updatePasswordAsync(password));
+  }
+
+  updateName(name: string) {
+    store.dispatch(updateProfileNameAsync(name));
+  }
+
+  updateProfileImage(url: string) {
+    store.dispatch(updateProfileImageAsync(url));
   }
 }
 

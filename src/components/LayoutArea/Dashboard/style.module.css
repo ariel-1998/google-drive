@@ -15,3 +15,8 @@
   gap: 50px;
   align-items: center;
 }
+
+.divider {
+  width: 100%;
+  border-color: #bbbbbb33;
+}

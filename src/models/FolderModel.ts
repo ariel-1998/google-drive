@@ -1,5 +1,4 @@
 import { FieldValue } from "firebase/firestore";
-import { FileModel } from "./FileModel";
 
 export type FolderModel = {
   id: string;

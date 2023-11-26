@@ -9,7 +9,7 @@ const Header: React.FC = () => {
       <Link to={"/update/email"}>updateEmail</Link>
       <Link to={"/update/password"}>updatePassword</Link>
       <Logout /> */}
-      <div>Home</div>
+      <span>Home</span>
       <Logout />
 
       <select>

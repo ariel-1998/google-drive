@@ -18,12 +18,16 @@ type UserStateObj = {
     emailUpdate: Action;
     passwordUpdate: Action;
     logout: Action;
+    updateProfileNameAsync: Action;
+    updateProfileImageAsync: Action;
   };
 };
 
 let initialState = {
   user: null,
   actions: {
+    updateProfileImageAsync: { status: "idle", error: null },
+    updateProfileNameAsync: { status: "idle", error: null },
     login: { status: "idle", error: null },
     register: { status: "idle", error: null },
     passwordReset: { status: "idle", error: null },
@@ -127,6 +131,37 @@ const userSlice = createSlice({
     builder.addCase(logoutAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "logout");
     });
+
+    //update profile name
+    builder.addCase(updateProfileNameAsync.pending, (state) => {
+      handleStateStatus(state, "pending", "updateProfileNameAsync");
+    }),
+      builder.addCase(updateProfileNameAsync.rejected, (state, action) => {
+        handleStateStatus(
+          state,
+          "rejected",
+          "updateProfileNameAsync",
+          action.error.message
+        );
+      });
+    builder.addCase(updateProfileNameAsync.fulfilled, (state) => {
+      handleStateStatus(state, "fulfilled", "updateProfileNameAsync");
+    });
+    //update profile image
+    builder.addCase(updateProfileImageAsync.pending, (state) => {
+      handleStateStatus(state, "pending", "updateProfileImageAsync");
+    }),
+      builder.addCase(updateProfileImageAsync.rejected, (state, action) => {
+        handleStateStatus(
+          state,
+          "rejected",
+          "updateProfileImageAsync",
+          action.error.message
+        );
+      });
+    builder.addCase(updateProfileImageAsync.fulfilled, (state) => {
+      handleStateStatus(state, "fulfilled", "updateProfileImageAsync");
+    });
   },
 });
 
@@ -137,6 +172,8 @@ export const {
   updateEmailAsync,
   logoutAsync,
   updatePasswordAsync,
+  updateProfileNameAsync,
+  updateProfileImageAsync,
 } = userThunks;
 export const { changeUser } = userSlice.actions;
 export default userSlice.reducer;
@@ -148,7 +185,9 @@ type Method =
   | "passwordReset"
   | "emailUpdate"
   | "passwordUpdate"
-  | "logout";
+  | "logout"
+  | "updateProfileNameAsync"
+  | "updateProfileImageAsync";
 
 export function handleStateStatus( //check if i can combine both functions into 1 in both slices
   // state.actions: T  instead of state

@@ -3,6 +3,13 @@ import { foldersThunks } from "./foldersThunks";
 import { FolderModel, Path } from "../../../models/FolderModel";
 import { Status, Action } from "../userRedux/userSlice";
 
+type FolderStateType = {
+  folders: Record<string, FolderModel>;
+  actions: Record<Method, Action>;
+  currentFolder: FolderModel | null;
+  path: Path[];
+};
+
 export const ROOT_FOLDER: FolderModel = {
   id: "",
   name: "Root",
@@ -10,13 +17,6 @@ export const ROOT_FOLDER: FolderModel = {
   children: [],
   path: [],
   userId: null,
-};
-
-type FolderStateType = {
-  folders: Record<string, FolderModel>;
-  actions: Record<Method, Action>;
-  currentFolder: FolderModel | null;
-  path: Path[];
 };
 
 const initialState = {

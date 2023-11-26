@@ -12,14 +12,18 @@ import Layout from "./components/LayoutArea/Layout/Layout";
 import UpdateEmail from "./components/AuthArea/UpdateEmail/UpdateEmail";
 import UpdatePassword from "./components/AuthArea/UpdatePassword/UpdatePassword";
 import Dashboard from "./components/LayoutArea/Dashboard/Dashboard";
+import { ROOT_FOLDER } from "./utils/redux/foldersRedux/foldersSlice";
+import UpdateProfile from "./components/AuthArea/UpdateProfile/UpdateProfile";
 
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       dispatch(changeUser(user));
+      ROOT_FOLDER.id = user?.uid || "";
       setLoading(false);
     });
     return unsubscribe;
@@ -43,6 +47,7 @@ function App() {
             <Route path="/update" Component={UnauthLayoutContainer}>
               <Route path="email" Component={UpdateEmail} />
               <Route path="password" Component={UpdatePassword} />
+              <Route path="profile" Component={UpdateProfile} />
             </Route>
             <Route Component={Layout}>
               <Route path="/" Component={Dashboard} />

@@ -19,6 +19,6 @@ export const storage = getStorage(app);
 
 export const dbCollectionRefs = {
   folders: collection(db, "folders"),
-  files: collection(db, "fildes"),
+  files: collection(db, "files"),
   folersDocRef: (docId: string) => doc(db, "folders", docId),
 };

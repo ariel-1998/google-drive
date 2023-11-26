@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
-import { FolderModel } from "../../../models/FolderModel";
 import Folder from "../Folder/Folder";
 import { RootState } from "../../../utils/redux/store";
 import { useSelector } from "react-redux";
 import { foldersService } from "../../../services/foldersService";
 import { ROOT_FOLDER } from "../../../utils/redux/foldersRedux/foldersSlice";
-import { useParams } from "react-router-dom";
 import styles from "./style.module.css";
 
 type FolderChildrenProps = {
@@ -17,10 +15,12 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
   const { status, error } = useSelector(
     (state: RootState) => state.folders.actions.getFolderChildren
   );
+  const { user } = useSelector((state: RootState) => state.user);
   const fulfilled = status === "fulfilled";
 
   useEffect(() => {
-    if (!folderId) {
+    if (folderId === user?.uid) {
+      console.log(ROOT_FOLDER);
       foldersService.getFolderChildren(ROOT_FOLDER);
       return;
     }

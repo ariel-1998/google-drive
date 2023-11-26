@@ -5,6 +5,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   updatePassword,
+  updateProfile,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
@@ -56,5 +57,25 @@ class UserThunks {
   logoutAsync = createAsyncThunk("user/logoutAsync", async () => {
     return await auth.signOut();
   });
+
+  updateProfileNameAsync = createAsyncThunk(
+    "user/updateProfileNameAsync",
+    async (name: string) => {
+      if (!auth.currentUser) throw new Error("User not logged in!");
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+    }
+  );
+
+  updateProfileImageAsync = createAsyncThunk(
+    "user/updateProfileImageAsync",
+    async (url: string) => {
+      if (!auth.currentUser) throw new Error("User not logged in!");
+      await updateProfile(auth.currentUser, {
+        photoURL: url,
+      });
+    }
+  );
 }
 export const userThunks = new UserThunks();
