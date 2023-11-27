@@ -2,8 +2,15 @@ import React, { useEffect } from "react";
 import { userService } from "../../../services/userService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
+import styles from "./style.module.css";
+import { FaSignOutAlt } from "react-icons/fa";
 
-const Logout: React.FC = () => {
+type LogoutProps = {
+  className?: string;
+  callback?: () => void;
+};
+
+const Logout: React.FC<LogoutProps> = ({ className, callback }) => {
   const {
     actions: {
       logout: { error, status },
@@ -13,15 +20,17 @@ const Logout: React.FC = () => {
   const loading = status === "pending";
 
   const logout = async () => {
+    if (loading) return;
     userService
       .logout()
-      .then(() => console.log("success"))
+      .then(() => callback && callback())
       .catch(() => console.log("error"));
   };
+
   return (
-    <button onClick={logout} disabled={loading}>
-      Logout
-    </button>
+    <div className={`${styles.logout} ${className}`} onClick={logout}>
+      Logout <FaSignOutAlt />
+    </div>
   );
 };
 

@@ -35,7 +35,6 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
     <div className={styles.foldersContainer}>
       {fulfilled &&
         currentFolder?.children.map((child) => (
-          //need to check if file then return file
           <Folder key={child.id} folder={child} />
         ))}
     </div>

@@ -13,16 +13,18 @@ const AddFolder: React.FC = () => {
       <div className={styles.addFolder} onClick={openModal}>
         <FaFolderPlus />
       </div>
-      {open && (
-        <div className={styles.modal} onClick={closeModal}>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={styles.innerModal}
-          >
-            <AddFolderForm closeModal={closeModal} />
-          </div>
+
+      <div
+        className={`${styles.modal} ${open ? styles.show : styles.hide}`}
+        onClick={closeModal}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`${styles.innerModal} ${open && styles.active}`}
+        >
+          <AddFolderForm closeModal={closeModal} />
         </div>
-      )}
+      </div>
     </>
   );
 };

@@ -12,7 +12,7 @@ const image = z
         return false;
       return true;
     },
-    { message: "what" }
+    { message: "Only Images are allowed." }
   );
 
 export const userProfileSchema = z.object({

@@ -34,7 +34,9 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
         <FaFolder />
       </i>
       {/** need to limit string length to and add dots instead */}
-      {folder.name}
+      <span>
+        {folder.name} asdas dasd asdas a dsadasd asdiha sidu hasuisauisah
+      </span>
     </div>
   );
 };

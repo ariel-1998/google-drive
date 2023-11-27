@@ -49,11 +49,9 @@ const FolderPath: React.FC<FolderPathProps> = ({ folderId }) => {
                     className={styles.breadCrumb}
                     onClick={() => navigateAndSetNewPath(i, p.id)}
                   >
-                    {/** need to limit string length to and add dots instead */}
-
                     {p.name}
                   </span>
-                  <span>/</span>
+                  <span className={styles.divider}>/</span>
                 </div>
               );
             }

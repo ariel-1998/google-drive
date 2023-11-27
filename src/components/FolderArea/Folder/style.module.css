@@ -9,13 +9,20 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: color 200ms ease-in-out, background-color 200ms ease-in-out;
-}
-
-.icon {
-  font-size: 30px;
+  line-height: 1rem;
+  white-space: nowrap;
 }
 
 .folder:hover {
   color: white;
   background-color: black;
+}
+
+.folder > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon {
+  font-size: 35px;
 }

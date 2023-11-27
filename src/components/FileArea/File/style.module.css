@@ -18,11 +18,15 @@
 .fileContainer:hover {
   color: white;
   background-color: black;
+  .icon {
+    color: white;
+  }
 }
 
 .icon {
   font-size: 35px;
   color: grey;
+  transition: color 200ms ease-in-out;
 }
 
 .fileName {

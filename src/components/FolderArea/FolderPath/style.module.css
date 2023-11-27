@@ -9,4 +9,13 @@
 .breadCrumb {
   color: rgb(19, 145, 195);
   cursor: pointer;
+  max-width: 10ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.divider {
+  color: #999;
+  font-weight: bolder;
 }

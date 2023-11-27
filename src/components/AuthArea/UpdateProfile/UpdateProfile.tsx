@@ -12,12 +12,7 @@ import {
   UserProfileForm,
   userProfileSchema,
 } from "../../../models/UserProfile";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../utils/firebaseConfig";
 
 const UpdateProfile: React.FC = () => {
@@ -41,7 +36,9 @@ const UpdateProfile: React.FC = () => {
     if (!user?.uid) return;
     setStorageError("");
     userService.updateName(data.name);
-    uploadImageFile(user.uid, data.image?.[0]!)
+    //might need to optimize image before uploading
+    if (!data.image?.[0]) return;
+    uploadImageFile(user.uid, data.image[0])
       .then((url) => {
         userService.updateProfileImage(url as string);
       })
@@ -58,12 +55,22 @@ const UpdateProfile: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit(submitUpdateName)}>
       <h2 className={styles.heading}>Update Profile</h2>
-      {!!error && <div className={styles.errorHeading}>{error}</div>}
+      {!!error ||
+        (storageError && (
+          <div className={styles.errorHeading}>{error || storageError}</div>
+        ))}
       {fulfilled && <div className={styles.successHeading}>Check Mail Box</div>}
-      <Input type="text" placeholder="Update Name..." {...register("name")} />
+      <Input
+        type="text"
+        placeholder="Update Name..."
+        defaultValue={user?.displayName || ""}
+        {...register("name")}
+      />
       {errors.name && (
         <div className={styles.errorMsg}>{errors.name.message}</div>
       )}
+      {/** need to add possibility to delete profile image */}
+      {/** i will add a checkbox to remove profile image*/}
       <Input
         type="file"
         placeholder="Update Profile..."

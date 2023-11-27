@@ -13,8 +13,8 @@
 
 .addFolder:hover {
   box-shadow: 0 0 5px#12b81a;
-  background-color: #12b81a55;
-  color: #09a011;
+  background-color: #12b81a;
+  color: #fff;
 }
 
 .input {

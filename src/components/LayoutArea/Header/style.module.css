@@ -1,9 +1,16 @@
 .header {
   width: 100%;
-  background-color: grey;
+  background-color: #dddddd77;
   display: flex;
   position: sticky;
   top: 0;
   left: 0;
   height: 70px;
+}
+
+.title {
+  font-size: xxx-large;
+  text-decoration: none;
+  color: black;
+  padding: 10px;
 }
