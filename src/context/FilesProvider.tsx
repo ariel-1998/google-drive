@@ -1,11 +1,5 @@
-import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { useSelector } from "react-redux";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../utils/redux/store";
 import {
   StorageReference,
@@ -26,6 +20,9 @@ import {
   where,
 } from "firebase/firestore";
 import { FileModel } from "../models/FileModel";
+import { Outlet } from "react-router-dom";
+import { resetAuthStateOnLogout } from "../utils/redux/userRedux/userSlice";
+import { resetFolderStateOnLogout } from "../utils/redux/foldersRedux/foldersSlice";
 
 type FilesContextProps = {
   filesState: FileState[];
@@ -42,9 +39,6 @@ export const useFiles = () => {
   if (!context) throw new Error("useFiles must be used inside FilesProvider.");
   return context;
 };
-type FilesProviderProps = {
-  children: ReactNode;
-};
 
 type FileState = {
   fileId: string;
@@ -57,16 +51,16 @@ type FileState = {
 
 type FilesCache = Record<string, FileModel[]>;
 
-const FilesProvider: React.FC<FilesProviderProps> = ({ children }) => {
+const FilesProvider: React.FC = () => {
   const { path, currentFolder } = useSelector(
     (state: RootState) => state.folders
   );
   const { user } = useSelector((state: RootState) => state.user);
   const [filesState, setFilesState] = useState<FileState[]>([]);
   const [files, setFiles] = useState<FilesCache>({});
-  //turn that into
   const [fetchingFiles, setFetchingFiles] = useState(false);
 
+  const dispatch = useDispatch();
   const handleUploadFiles = async (file: File) => {
     if (!path || !user?.uid) return;
     const filePath = `${path.map((p) => p.id).join("/")}/${file.name}`;
@@ -240,6 +234,16 @@ const FilesProvider: React.FC<FilesProviderProps> = ({ children }) => {
     }
   }
 
+  //reset data on logout/leaving browser
+  useEffect(() => {
+    return () => {
+      setFilesState([]);
+      setFiles({});
+      dispatch(resetAuthStateOnLogout());
+      dispatch(resetFolderStateOnLogout());
+    };
+  }, []);
+
   return (
     <FilesContext.Provider
       value={{
@@ -250,7 +254,7 @@ const FilesProvider: React.FC<FilesProviderProps> = ({ children }) => {
         getCurrentFolderFiles,
       }}
     >
-      {children}
+      <Outlet />
     </FilesContext.Provider>
   );
 };

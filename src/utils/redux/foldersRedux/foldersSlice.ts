@@ -43,6 +43,10 @@ const foldersSlice = createSlice({
     setPath(state, action: PayloadAction<Path[]>) {
       state.path = action.payload;
     },
+
+    resetFolderStateOnLogout() {
+      return initialState;
+    },
   },
   extraReducers(builder) {
     //addFolder
@@ -83,8 +87,12 @@ const foldersSlice = createSlice({
 
 export const { createFolderAsync, getFolderChildrenAsync, getFolderAsync } =
   foldersThunks;
-export const { setCurrentFolder, resetAddFolderStatus, setPath } =
-  foldersSlice.actions;
+export const {
+  setCurrentFolder,
+  resetAddFolderStatus,
+  setPath,
+  resetFolderStateOnLogout,
+} = foldersSlice.actions;
 export default foldersSlice.reducer;
 
 type Method = "addFolder" | "getFolderChildren";

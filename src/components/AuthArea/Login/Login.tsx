@@ -5,25 +5,19 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import {
   CredentialsSchemaType,
-  UserCredentials,
   credentialsSchema,
 } from "../../../models/UserCredentials";
 import { userService } from "../../../services/userService";
 import Input from "../../Custom/Input/Input";
 import Button from "../../Custom/Button/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Spinner from "../../Custom/Spinner/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ForgotPassword from "../ForgotPassword/ForgotPassword";
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const {
-    user,
-    actions: {
-      login: { error, status },
-    },
-  } = useSelector((state: RootState) => state.user);
+  const { error, status } = useSelector(
+    (state: RootState) => state.user.actions.login
+  );
 
   const loading = status === "pending";
 
@@ -37,11 +31,6 @@ const Login: React.FC = () => {
   const submitLogin = (data: CredentialsSchemaType) => {
     userService.login({ email: data.email, password: data.password });
   };
-
-  useEffect(() => {
-    if (!user) return;
-    navigate("/");
-  }, [user]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(submitLogin)}>

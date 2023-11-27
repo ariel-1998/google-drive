@@ -11,20 +11,17 @@ type LogoutProps = {
 };
 
 const Logout: React.FC<LogoutProps> = ({ className, callback }) => {
-  const {
-    actions: {
-      logout: { error, status },
-    },
-  } = useSelector((state: RootState) => state.user);
+  const { error, status } = useSelector(
+    (state: RootState) => state.user.actions.logout
+  );
 
   const loading = status === "pending";
 
   const logout = async () => {
     if (loading) return;
-    userService
-      .logout()
-      .then(() => callback && callback())
-      .catch(() => console.log("error"));
+    userService.logout().then(() => {
+      !!callback && callback();
+    });
   };
 
   return (

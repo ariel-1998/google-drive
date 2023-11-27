@@ -7,8 +7,6 @@ import { useParams } from "react-router-dom";
 import styles from "./style.module.css";
 import FilesUploadProgress from "../../FileArea/FilesUploadProgress/FilesUploadProgress";
 import FileList from "../../FileArea/FileList/FileList";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../utils/redux/store";
 import { ROOT_FOLDER } from "../../../utils/redux/foldersRedux/foldersSlice";
 
 const Dashboard: React.FC = () => {

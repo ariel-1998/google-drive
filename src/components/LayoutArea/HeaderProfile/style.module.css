@@ -26,6 +26,7 @@
   padding-top: 5px;
   padding-bottom: 5px;
   transition: all 300ms ease-out;
+  outline: none;
 }
 
 .list.active {

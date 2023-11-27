@@ -14,6 +14,7 @@ import UpdatePassword from "./components/AuthArea/UpdatePassword/UpdatePassword"
 import Dashboard from "./components/LayoutArea/Dashboard/Dashboard";
 import { ROOT_FOLDER } from "./utils/redux/foldersRedux/foldersSlice";
 import UpdateProfile from "./components/AuthArea/UpdateProfile/UpdateProfile";
+import FilesProvider from "./context/FilesProvider";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ function App() {
             <Route path="password-reset" Component={ForgotPassword} />
           </Route>
         ) : (
-          <>
+          <Route Component={FilesProvider}>
             <Route path="/update" Component={UnauthLayoutContainer}>
               <Route path="email" Component={UpdateEmail} />
               <Route path="password" Component={UpdatePassword} />
@@ -53,7 +54,7 @@ function App() {
               <Route path="/" Component={Dashboard} />
               <Route path="/folder/:folderId" Component={Dashboard} />
             </Route>
-          </>
+          </Route>
         )}
         {/** Redirect Route*/}
         <Route

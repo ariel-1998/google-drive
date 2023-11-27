@@ -15,13 +15,9 @@ import { RootState } from "../../../utils/redux/store";
 import Spinner from "../../Custom/Spinner/Spinner";
 
 const Signup: React.FC = () => {
-  const {
-    user,
-    actions: {
-      register: { error, status },
-    },
-  } = useSelector((state: RootState) => state.user);
-  const navigate = useNavigate();
+  const { error, status } = useSelector(
+    (state: RootState) => state.user.actions.register
+  );
 
   const loading = status === "pending";
   const {
@@ -35,11 +31,6 @@ const Signup: React.FC = () => {
   const registerUser = (data: any) => {
     userService.register(data);
   };
-
-  useEffect(() => {
-    if (!user) return;
-    navigate("/");
-  }, [user]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(registerUser)}>

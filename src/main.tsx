@@ -10,9 +10,7 @@ import { FolderModel } from "./models/FolderModel.ts";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode>
   <Provider store={store}>
-    <FilesProvider>
-      <App />
-    </FilesProvider>
+    <App />
   </Provider>
   // </React.StrictMode>
 );

@@ -55,7 +55,7 @@ class UserThunks {
     }
   );
   logoutAsync = createAsyncThunk("user/logoutAsync", async () => {
-    return await auth.signOut();
+    await auth.signOut();
   });
 
   updateProfileNameAsync = createAsyncThunk(

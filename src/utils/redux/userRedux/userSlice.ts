@@ -35,14 +35,6 @@ let initialState = {
     passwordUpdate: { status: "idle", error: null },
     logout: { status: "idle", error: null },
   },
-  // actions: {
-  //   login: { loading: false, error: null, fulfilled: false },
-  //   register: { loading: false, error: null, fulfilled: false },
-  //   passwordReset: { loading: false, error: null, fulfilled: false },
-  //   emailUpdate: { loading: false, error: null, fulfilled: false },
-  //   passwordUpdate: { loading: false, error: null, fulfilled: false },
-  //   logout: { loading: false, error: null, fulfilled: false },
-  // },
 } as UserStateObj;
 
 const userSlice = createSlice({
@@ -52,6 +44,9 @@ const userSlice = createSlice({
     changeUser(state, action: PayloadAction<UserState>) {
       state.user = action.payload;
       return state;
+    },
+    resetAuthStateOnLogout() {
+      return initialState;
     },
   },
   extraReducers(builder) {
@@ -175,7 +170,7 @@ export const {
   updateProfileNameAsync,
   updateProfileImageAsync,
 } = userThunks;
-export const { changeUser } = userSlice.actions;
+export const { changeUser, resetAuthStateOnLogout } = userSlice.actions;
 export default userSlice.reducer;
 
 export type Status = "pending" | "rejected" | "fulfilled";
