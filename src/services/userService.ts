@@ -1,11 +1,9 @@
 import { UserCredentials } from "../models/UserCredentials";
-import { resetFolderStateOnLogout } from "../utils/redux/foldersRedux/foldersSlice";
 import { store } from "../utils/redux/store";
 import {
   logoutAsync,
   registerAsync,
   resetPasswordAsync,
-  resetAuthStateOnLogout,
   signInAsync,
   updateEmailAsync,
   updatePasswordAsync,
@@ -45,11 +43,6 @@ class UserService {
   updateProfileImage(url: string) {
     store.dispatch(updateProfileImageAsync(url));
   }
-
-  // resetAllStatesOnLogoutFulfilled() {
-  //   store.dispatch(resetAuthStateOnLogout());
-  //   store.dispatch(resetFolderStateOnLogout());
-  // }
 }
 
 export const userService = new UserService();

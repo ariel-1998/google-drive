@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-  MouseEvent,
-} from "react";
+import React, { ReactNode, useRef, useState, useEffect } from "react";
 import styles from "./style.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
@@ -16,23 +10,37 @@ const HeaderProfile: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const [menuOpen, setMenuOpen] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
-    if (!listRef.current || !menuOpen) return;
+    const handleOutsideClick = (e: globalThis.MouseEvent) => {
+      if (
+        listRef.current &&
+        !listRef.current.contains(e.target as Node) &&
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        closeMenu();
+      }
+    };
 
-    // needed because of the visibility hidden css for the animation
-    setTimeout(() => {
-      listRef.current?.focus();
-    }, 20);
-  }, [menuOpen]);
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <div
+      ref={containerRef}
       className={styles.container}
-      onClick={() => setMenuOpen((pre) => !pre)}
+      onClick={() => {
+        setMenuOpen((pre) => !pre);
+      }}
     >
-      <i>
+      <i className={styles.icon}>
         <FaAngleDown />
       </i>
       {/**need to add defaulte image if no src */}
@@ -40,12 +48,10 @@ const HeaderProfile: React.FC = () => {
       <div
         ref={listRef}
         onClick={(e) => e.stopPropagation()}
-        onBlur={closeMenu}
-        tabIndex={0}
         className={`${styles.list} ${menuOpen && styles.active}`}
       >
         <ListItem className={styles.listHeader}>Settings</ListItem>
-        <hr className={styles.divider} />
+        <hr className={styles.divider} id="divider" />
 
         <Link to="/update/email" onClick={closeMenu}>
           <ListItem>Update Email</ListItem>

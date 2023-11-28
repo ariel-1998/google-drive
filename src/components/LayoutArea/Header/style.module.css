@@ -1,16 +1,21 @@
 .header {
-  width: 100%;
-  background-color: #dddddd77;
-  display: flex;
   position: sticky;
   top: 0;
   left: 0;
+  /* background-color: #dddddd77; good color */
+  /* background-color: #f8f9fa; darkMode */
+  background-color: #222;
+  display: flex;
+  justify-content: space-between;
   height: 70px;
+  padding-left: 5%;
+  padding-right: 5%;
+  z-index: 1;
 }
 
 .title {
   font-size: xxx-large;
   text-decoration: none;
-  color: black;
+  color: white;
   padding: 10px;
 }

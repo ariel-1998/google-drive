@@ -11,8 +11,7 @@ import {
   Path,
 } from "../../../models/FolderModel";
 import Input from "../../Custom/Input/Input";
-import { useParams } from "react-router-dom";
-import { resetAddFolderStatus } from "../../../utils/redux/foldersRedux/foldersSlice";
+// import { resetAddFolderStatus } from "../../../utils/redux/foldersRedux/foldersSlice";
 
 type AddFolderFormProps = {
   closeModal(): void;
@@ -66,10 +65,24 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
 
   useEffect(() => {
     if (fulfilled) closeModal();
-    return () => {
-      dispatch(resetAddFolderStatus());
-    };
   }, [fulfilled]);
+
+  useEffect(() => {
+    if (!folderNameRef.current) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        (entries[0].target as HTMLInputElement).focus();
+      } else {
+        if (folderNameRef.current) folderNameRef.current.value = "";
+      }
+    });
+
+    observer.observe(folderNameRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <form className={styles.form} onSubmit={submitCreateFolder}>

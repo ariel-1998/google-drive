@@ -3,9 +3,10 @@ import styles from "./style.module.css";
 
 const Footer: React.FC = () => {
   return (
-    <>
-      <div>footer</div>
-    </>
+    <div className={styles.footer}>
+      <div className={styles.footerBorder} />
+      footer
+    </div>
   );
 };
 

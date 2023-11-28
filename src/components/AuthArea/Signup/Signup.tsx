@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./style.module.css";
 import { useForm } from "react-hook-form";
 import { userService } from "../../../services/userService";
@@ -8,7 +8,7 @@ import {
 } from "../../../models/UserCredentials";
 import Input from "../../Custom/Input/Input";
 import Button from "../../Custom/Button/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";

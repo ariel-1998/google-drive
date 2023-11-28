@@ -4,8 +4,6 @@ import App from "./App.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./utils/redux/store.ts";
-import FilesProvider from "./context/FilesProvider.tsx";
-import { FolderModel } from "./models/FolderModel.ts";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode>

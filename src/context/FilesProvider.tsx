@@ -30,6 +30,7 @@ type FilesContextProps = {
   fetchingFiles: boolean;
   handleUploadFiles: (file: File) => void;
   getCurrentFolderFiles(): Promise<void>;
+  removeFileOnError(fileId: string): void;
 };
 
 const FilesContext = createContext<FilesContextProps | null>(null);
@@ -40,7 +41,7 @@ export const useFiles = () => {
   return context;
 };
 
-type FileState = {
+export type FileState = {
   fileId: string;
   fileName: string;
   uploadProgress: number;
@@ -61,6 +62,7 @@ const FilesProvider: React.FC = () => {
   const [fetchingFiles, setFetchingFiles] = useState(false);
 
   const dispatch = useDispatch();
+
   const handleUploadFiles = async (file: File) => {
     if (!path || !user?.uid) return;
     const filePath = `${path.map((p) => p.id).join("/")}/${file.name}`;
@@ -234,6 +236,11 @@ const FilesProvider: React.FC = () => {
     }
   }
 
+  function removeFileOnError(fileId: string) {
+    setFilesState((prevState) =>
+      prevState.filter((file) => file.fileId !== fileId)
+    );
+  }
   //reset data on logout/leaving browser
   useEffect(() => {
     return () => {
@@ -252,6 +259,7 @@ const FilesProvider: React.FC = () => {
         fetchingFiles,
         handleUploadFiles,
         getCurrentFolderFiles,
+        removeFileOnError,
       }}
     >
       <Outlet />

@@ -1,10 +1,6 @@
 import React, { ChangeEvent } from "react";
 import styles from "./style.module.css";
 import { FaFileUpload } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../utils/redux/store";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../utils/firebaseConfig";
 import { useFiles } from "../../../context/FilesProvider";
 
 const AddFile: React.FC = () => {

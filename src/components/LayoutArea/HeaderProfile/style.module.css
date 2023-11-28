@@ -1,10 +1,10 @@
 .container {
   display: flex;
-  border: 1px solid #999;
   position: relative;
   cursor: pointer;
   align-items: center;
   justify-content: center;
+  z-index: 100;
 }
 
 .image {
@@ -13,10 +13,13 @@
   border-radius: 50%;
 }
 
+.icon {
+  color: white;
+}
+
 .list {
-  visibility: hidden;
   position: absolute;
-  top: -50%;
+  top: -500%;
   right: 78%;
   border-radius: 10px;
   font-size: 1.1rem;
@@ -32,7 +35,7 @@
 .list.active {
   opacity: 1;
   top: 50%;
-  visibility: visible;
+  z-index: 2000;
 }
 
 .listItem,

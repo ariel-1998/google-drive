@@ -1,0 +1,101 @@
+.shirnkWindow {
+  width: fit-content;
+  width: 250px;
+  position: fixed;
+  top: 50vh;
+  right: 20px;
+  padding-top: 5px;
+  background-color: #ddd9;
+  border-radius: 5px;
+  padding: 2px;
+}
+
+.shirnkWindow > span:first-child {
+  padding-left: 10px;
+  cursor: pointer;
+  color: red;
+}
+
+.transitionDiv {
+  overflow: hidden;
+  width: 100%;
+  flex-direction: column;
+  gap: 20px;
+  display: flex;
+  transition: max-height 500ms ease-in-out, padding 500ms ease-in-out;
+  max-height: 0;
+  padding: 0;
+}
+
+.transitionDiv.show {
+  overflow: auto;
+  max-height: 300px;
+  padding: 20px;
+}
+
+.transitionDiv.show::-webkit-scrollbar {
+  display: none;
+}
+
+/* single file*/
+.fileWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--grey-border-color);
+}
+
+.detailsDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detailsDiv > div {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.fileDetailSpan {
+  font-weight: bold;
+}
+
+.fileDetailSpan.error {
+  font-weight: bold;
+  color: var(--error-text-color);
+}
+
+.progressBarWrapper {
+  position: relative;
+  width: 200px;
+  height: 1rem;
+  border: 1px solid #1118;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 2px var(--file-color);
+  flex-shrink: 0;
+}
+
+.percetage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.progressBar {
+  height: 100%;
+  transition: width 500ms linear;
+}
+
+.deleteIcon {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  cursor: pointer;
+  width: fit-content;
+  align-self: end;
+  color: var(--error-text-color);
+}

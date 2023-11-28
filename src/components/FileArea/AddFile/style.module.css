@@ -1,19 +1,19 @@
 .addFolder {
-  border: 1px solid #66bb6a;
+  border: 1px solid var(--file-color);
   padding: 5px;
   display: grid;
   place-items: center;
   width: max-content;
   border-radius: 5px;
-  color: #12b81a;
+  color: var(--file-color);
   font-size: 35px;
   cursor: pointer;
   transition: all 100ms ease-in-out;
 }
 
 .addFolder:hover {
-  box-shadow: 0 0 5px#12b81a;
-  background-color: #12b81a;
+  box-shadow: 0 0 5px var(--file-color);
+  background-color: var(--file-color);
   color: #fff;
 }
 

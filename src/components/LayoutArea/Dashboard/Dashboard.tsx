@@ -14,20 +14,34 @@ const Dashboard: React.FC = () => {
   const folderId = id || ROOT_FOLDER.id;
 
   return (
-    <div className={styles.dashboard}>
-      <div className={styles.formsAndPathWrapper}>
-        <div className={styles.forms}>
-          <AddFolder />
-          <AddFile />
+    <>
+      <div className={styles.dashboard}>
+        <div className={styles.formsAndPathWrapper}>
+          <FolderPath folderId={folderId} />
+          <div className={styles.forms}>
+            <AddFile />
+            <AddFolder />
+          </div>
         </div>
-        <FolderPath folderId={folderId} />
+        <FolderAndFileSlider folderId={folderId} />
       </div>
-      <FolderChildren folderId={folderId} />
-      <hr className={styles.divider} />
       <FilesUploadProgress />
-      <FileList />
-    </div>
+    </>
   );
 };
 
 export default Dashboard;
+
+type FolderAndFileSliderProps = {
+  folderId: string;
+};
+
+function FolderAndFileSlider({ folderId }: FolderAndFileSliderProps) {
+  return (
+    <div className={styles.childrenWrapper}>
+      <FolderChildren folderId={folderId} />
+      <hr className={styles.divider} />
+      <FileList />
+    </div>
+  );
+}

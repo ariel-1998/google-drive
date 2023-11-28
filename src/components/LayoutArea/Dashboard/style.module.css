@@ -1,6 +1,20 @@
 .dashboard {
   display: flex;
   flex-direction: column;
+  /* position: relative; */
+}
+
+.formsAndPathWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+  align-items: center;
+  padding-top: 10px;
+  justify-content: space-between;
+  background-color: transparent;
+  position: sticky;
+  top: 70px;
+  padding: 10px;
 }
 
 .forms {
@@ -9,11 +23,9 @@
   gap: 5px;
 }
 
-.formsAndPathWrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 50px;
-  align-items: center;
+.childrenWrapper {
+  margin: 0 auto;
+  width: 95%;
 }
 
 .divider {

@@ -8,6 +8,16 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+:root {
+  --folder-color: #dbd94a;
+  --file-color: #547980;
+  --progress-bar-color: #12b81a;
+  --grey-border-color: #bbbbbb77;
+  --error-text-color: #ff6347;
+}
+
 body {
   margin: 0;
+  /* background-color: #fff; */
+  /* background-color: #343a40; darkMode */
 }

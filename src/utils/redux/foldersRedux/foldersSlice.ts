@@ -36,10 +36,10 @@ const foldersSlice = createSlice({
     setCurrentFolder(state, action: PayloadAction<FolderModel>) {
       state.currentFolder = action.payload;
     },
-    resetAddFolderStatus(state) {
-      state.actions.addFolder.status = "idle";
-      state.actions.addFolder.error = null;
-    },
+    // resetAddFolderStatus(state) {
+    //   state.actions.addFolder.status = "idle";
+    //   state.actions.addFolder.error = null;
+    // },
     setPath(state, action: PayloadAction<Path[]>) {
       state.path = action.payload;
     },
@@ -59,7 +59,9 @@ const foldersSlice = createSlice({
     builder.addCase(createFolderAsync.fulfilled, (state, action) => {
       handleStateStatus(state, "fulfilled", "addFolder");
       const { payload } = action;
+      console.log(payload);
       state.folders[payload.id] = payload;
+      state.folders[payload.parentId!].children.push(payload);
       state.currentFolder?.children?.push(payload);
     });
     //getFolderChildren
@@ -89,7 +91,7 @@ export const { createFolderAsync, getFolderChildrenAsync, getFolderAsync } =
   foldersThunks;
 export const {
   setCurrentFolder,
-  resetAddFolderStatus,
+  // resetAddFolderStatus,
   setPath,
   resetFolderStateOnLogout,
 } = foldersSlice.actions;

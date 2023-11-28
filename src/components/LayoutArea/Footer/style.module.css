@@ -1,0 +1,13 @@
+.footer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-family: roboto;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+.footerBorder {
+  border-top: 1px solid var(--grey-border-color);
+  width: 95%;
+}

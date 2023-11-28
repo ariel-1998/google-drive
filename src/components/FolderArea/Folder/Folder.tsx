@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./style.module.css";
 import { FaFolder } from "react-icons/fa";
 import { FolderModel, Path } from "../../../models/FolderModel";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   setCurrentFolder,
@@ -29,14 +29,12 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
   };
 
   return (
-    <div onClick={setFolder} className={styles.folder}>
+    <div title={folder.name} onClick={setFolder} className={styles.folder}>
       <i className={styles.icon}>
         <FaFolder />
       </i>
       {/** need to limit string length to and add dots instead */}
-      <span>
-        {folder.name} asdas dasd asdas a dsadasd asdiha sidu hasuisauisah
-      </span>
+      <span className={styles.folderName}>{folder.name}</span>
     </div>
   );
 };

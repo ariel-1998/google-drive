@@ -4,7 +4,13 @@ import Login from "./components/AuthArea/Login/Login";
 import { auth } from "./utils/firebaseConfig";
 import { changeUser } from "./utils/redux/userRedux/userSlice";
 import Signup from "./components/AuthArea/Signup/Signup";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import UnauthLayoutContainer from "./components/UnauthedLayout/LayoutContainer/UnauthLayoutContainer";
 import ForgotPassword from "./components/AuthArea/ForgotPassword/ForgotPassword";
 import { RootState } from "./utils/redux/store";
@@ -57,13 +63,26 @@ function App() {
           </Route>
         )}
         {/** Redirect Route*/}
-        <Route
+        {/* <Route
           path="*"
           element={<Navigate to={user ? "/" : "/auth/login"} />}
-        />
+        /> */}
+        <Route path="*" Component={RedirectRoute} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+const RedirectRoute: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    if (user) navigate("/");
+    else navigate("/auth/login");
+  }, [navigate]);
+
+  return null;
+};

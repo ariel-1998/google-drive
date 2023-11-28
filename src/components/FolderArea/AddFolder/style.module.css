@@ -1,19 +1,20 @@
 .addFolder {
-  border: 1px solid #66bb6a;
+  border: 1px solid var(--folder-color);
   padding: 5px;
   display: grid;
   place-items: center;
   width: max-content;
   border-radius: 5px;
-  color: #12b81a;
+  color: var(--folder-color);
   font-size: 35px;
   cursor: pointer;
   transition: all 100ms ease-in-out;
 }
 
 .addFolder:hover {
-  box-shadow: 0 0 5px#12b81a;
-  background-color: #12b81a;
+  box-shadow: 0 0 5px var(--folder-color);
+  /* background-color: #12b81a; */
+  background-color: var(--folder-color);
   color: #fff;
 }
 
@@ -65,31 +66,31 @@
 }
 
 .innerModal {
-  animation: hideForm 300ms ease-in-out forwards;
+  animation: hideForm 200ms ease-in-out forwards;
 }
 
 .innerModal.active {
-  animation: showForm 300ms ease-in-out forwards;
+  animation: showForm 500ms ease-in-out forwards;
 }
 
 @keyframes showForm {
   0% {
-    opacity: 0;
-    transform: translateY(-100%);
+    display: none;
+    transform: translateY(-200%);
   }
   100% {
-    opacity: 1;
+    display: block;
     transform: translateY(0);
   }
 }
 
 @keyframes hideForm {
   0% {
-    opacity: 1;
+    display: block;
     transform: translateY(0);
   }
   100% {
-    opacity: 0;
-    transform: translateY(-100%);
+    display: none;
+    transform: translateY(-200%);
   }
 }
