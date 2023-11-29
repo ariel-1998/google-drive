@@ -1,24 +1,24 @@
 .folder {
   border: 1px solid #bbbbbb77;
   padding: 10px;
-  width: 250px;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 15px;
-  font-weight: bold;
   font-size: 1.1rem;
   cursor: pointer;
   transition: color 200ms ease-in-out, background-color 200ms ease-in-out,
     scale 200ms ease-in-out;
   line-height: 1rem;
   white-space: nowrap;
-  /* background-color: #333; */
   color: var(--folder-color);
+  box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .folder:hover {
-  color: #333;
+  color: var(--file-color);
   background-color: var(--folder-color);
+  box-shadow: 6px 2px 2px rgba(0, 0, 0, 0.3);
   scale: 1.1;
 }
 

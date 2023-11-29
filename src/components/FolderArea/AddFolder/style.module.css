@@ -25,10 +25,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 100;
   display: none;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
   /* animation: showModal 500ms ease-in-out forwards; */
 }
 

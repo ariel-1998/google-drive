@@ -79,7 +79,7 @@ const UpdateProfile: React.FC = () => {
       {errors.image && (
         <div className={styles.errorMsg}>{errors.image.message}</div>
       )}
-      <Button theme="primary" type="submit" disabled={loading}>
+      <Button theme="secondary" type="submit" disabled={loading}>
         {loading ? <Spinner /> : "Update Profile"}
       </Button>
     </form>

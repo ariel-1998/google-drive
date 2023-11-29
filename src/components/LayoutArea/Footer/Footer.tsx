@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <div className={styles.footer}>
       <div className={styles.footerBorder} />
-      footer
+      MiniDrive & Firebase V.9@2023
     </div>
   );
 };

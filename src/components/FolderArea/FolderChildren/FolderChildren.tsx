@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { foldersService } from "../../../services/foldersService";
 import { ROOT_FOLDER } from "../../../utils/redux/foldersRedux/foldersSlice";
 import styles from "./style.module.css";
+import Spinner from "../../Custom/Spinner/Spinner";
 
 type FolderChildrenProps = {
   folderId: string;
@@ -17,10 +18,10 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
   );
   const { user } = useSelector((state: RootState) => state.user);
   const fulfilled = status === "fulfilled";
+  const loading = status === "pending";
 
   useEffect(() => {
     if (folderId === user?.uid) {
-      console.log(ROOT_FOLDER);
       foldersService.getFolderChildren(ROOT_FOLDER);
       return;
     }
@@ -33,6 +34,11 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
 
   return (
     <div className={styles.foldersContainer}>
+      {loading && (
+        <span className={styles.spinnerWrapper}>
+          <Spinner />
+        </span>
+      )}
       {fulfilled &&
         currentFolder?.children.map((child) => (
           <Folder key={child.id} folder={child} />

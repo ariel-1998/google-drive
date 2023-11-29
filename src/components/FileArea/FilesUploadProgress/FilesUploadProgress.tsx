@@ -8,7 +8,7 @@ const FilesUploadProgress: React.FC = () => {
   const [show, setShow] = useState(false);
 
   return (
-    <div className={styles.shirnkWindow}>
+    <div className={`${styles.shirnkWindow} ${show && styles.open}`}>
       <span onClick={() => setShow((pre) => !pre)}>
         {!show ? "Show" : "Hide"} Upload
       </span>
@@ -47,7 +47,9 @@ function FileUpload({ file }: FileUploadProps) {
             <span className={`${styles.fileDetailSpan} ${styles.error}`}>
               error:
             </span>
-            <span>{file.errorMsg}</span>
+            <span>
+              {file.errorMsg ? file.errorMsg : "Could not upload file."}
+            </span>
           </div>
         )}
       </div>
@@ -71,7 +73,7 @@ function FileUpload({ file }: FileUploadProps) {
         <div
           style={{
             backgroundColor: file.error ? "red" : "var(--progress-bar-color)",
-            width: `${file.uploadProgress.toFixed()}%`,
+            width: file.error ? "100%" : `${file.uploadProgress.toFixed()}%`,
           }}
           className={styles.progressBar}
         />

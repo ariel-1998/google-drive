@@ -45,7 +45,7 @@ export type FileState = {
   fileId: string;
   fileName: string;
   uploadProgress: number;
-  status: "running" | "paused" | "canceled";
+  status: "Running" | "Paused" | "Canceled";
   error: boolean;
   errorMsg: string | null;
 };
@@ -69,19 +69,30 @@ const FilesProvider: React.FC = () => {
     //add metadata {userId: user.uid} to storageRef
     const storageRef = ref(storage, filePath);
     const tempFileId = uuidV4();
+    // console.log(filePath);
 
     const newFileState: FileState = {
       fileName: file.name,
       error: false,
-      status: "running",
+      status: "Running",
       uploadProgress: 0,
       fileId: tempFileId,
       errorMsg: null,
     };
 
     //check for file duplicates
-    const fileDuplicate = await checkForFileDuplicate(storageRef, tempFileId);
-    if (fileDuplicate) return;
+    const fileDuplicate = await checkForFileDuplicate(storageRef);
+    if (fileDuplicate) {
+      console.log("filedup");
+      const errorFile: FileState = {
+        ...newFileState,
+        status: "Canceled",
+        error: true,
+        errorMsg: "File already exist.",
+      };
+      setFilesState((prevState) => [...prevState, errorFile]);
+      return;
+    }
 
     setFilesState((prevState) => [...prevState, newFileState]);
     const uploadTask = uploadBytesResumable(storageRef, file, {
@@ -94,7 +105,7 @@ const FilesProvider: React.FC = () => {
       (error) => {
         // Handle unsuccessful uploads
         console.log(error);
-        uploadTaskOnError(tempFileId, error.message);
+        uploadTaskOnError(tempFileId);
       },
       () => {
         // Handle successful uploads on complete
@@ -121,7 +132,7 @@ const FilesProvider: React.FC = () => {
         setFilesState((prevState) =>
           prevState.map((file) => {
             if (file.fileId === tempFileId) {
-              return { ...file, status: "paused" };
+              return { ...file, status: "Paused" };
             }
             return file;
           })
@@ -131,7 +142,7 @@ const FilesProvider: React.FC = () => {
         setFilesState((prevState) =>
           prevState.map((file) => {
             if (file.fileId === tempFileId) {
-              return { ...file, status: "running" };
+              return { ...file, status: "Running" };
             }
             return file;
           })
@@ -161,52 +172,46 @@ const FilesProvider: React.FC = () => {
         id: uploadedFile.id,
         uploadedAt: new Date(),
       };
+      // checking if there is an array in cache
+      // if there is then we add the new file to it right away
+      // if there is no cache then dont store it at all (we will bring it with all the files)
       setFiles((prevFiles) => {
         const currentFolderId = path[path.length - 1].id;
-        console.log("files", files);
         if (prevFiles[currentFolderId]) {
           return {
             ...prevFiles,
             [currentFolderId]: [...prevFiles[currentFolderId], fileWithId],
           };
         }
-        return { ...prevFiles, [currentFolderId]: [fileWithId] };
+        return prevFiles;
       });
       setFilesState((prevState) => {
         return prevState.filter((file) => file.fileId !== tempFileId);
       });
     } catch (error: any) {
-      uploadTaskOnError(tempFileId, error.message);
+      uploadTaskOnError(tempFileId);
     }
   }
 
-  function uploadTaskOnError(tempFileId: string, errMsg: string) {
+  function uploadTaskOnError(tempFileId: string, errorMsg = "") {
     setFilesState((prevState) =>
       prevState.map((file) => {
         if (file.fileId === tempFileId) {
-          return { ...file, error: true, errorMsg: errMsg };
+          return { ...file, error: true, status: "Canceled", errorMsg };
         }
         return file;
       })
     );
   }
 
-  async function checkForFileDuplicate(
-    storageRef: StorageReference,
-    tempFileId: string
-  ) {
+  async function checkForFileDuplicate(storageRef: StorageReference) {
     try {
       await getDownloadURL(storageRef);
-      uploadTaskOnError(tempFileId, "File name already exist");
       return true;
     } catch (error: any) {
       return false;
     }
   }
-
-  useEffect(() => {
-    getCurrentFolderFiles();
-  }, [currentFolder]);
 
   // function get currentFolder files
   async function getCurrentFolderFiles() {

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import File from "../File/File";
 import styles from "./style.module.css";
+import Spinner from "../../Custom/Spinner/Spinner";
 
 const FileList: React.FC = () => {
   const { files, fetchingFiles } = useFiles();
@@ -14,7 +15,11 @@ const FileList: React.FC = () => {
 
   return (
     <div className={styles.filesContainer}>
-      {fetchingFiles && "loading..."}
+      {fetchingFiles && (
+        <span className={styles.spinnerWrapper}>
+          <Spinner />
+        </span>
+      )}
       {filesInCurrentFolder.map((file) => (
         <File key={file.id} file={file} />
       ))}

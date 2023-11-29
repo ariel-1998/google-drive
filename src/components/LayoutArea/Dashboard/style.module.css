@@ -1,20 +1,13 @@
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  /* position: relative; */
-}
-
 .formsAndPathWrapper {
   display: flex;
   flex-direction: row;
-  gap: 50px;
+  gap: 30px;
+  padding: 20px;
   align-items: center;
-  padding-top: 10px;
   justify-content: space-between;
   background-color: transparent;
-  position: sticky;
-  top: 70px;
-  padding: 10px;
+  align-items: center;
+  height: fit-content;
 }
 
 .forms {
@@ -23,12 +16,58 @@
   gap: 5px;
 }
 
-.childrenWrapper {
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sliderContainer {
   margin: 0 auto;
   width: 95%;
 }
 
-.divider {
-  width: 100%;
-  border-color: #bbbbbb33;
+.categories {
+  display: flex;
+  margin-left: 50px;
+}
+
+.categories > span {
+  border: 1px solid var(--grey-border-color);
+  padding: 15px;
+  border-bottom: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 150ms ease-in-out;
+  transform-origin: bottom;
+  box-shadow: none;
+}
+
+.categories > span.selected {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  color: var(--error-text-color);
+  cursor: default;
+  border: none;
+}
+
+.childrenWrapper {
+  border-top: 1px solid var(--grey-border-color);
+  overflow: hidden;
+}
+
+.filesCategory {
+  max-height: 0;
+  transform: translateX(150%);
+  transition: transform 300ms ease-in-out;
+}
+
+.foldersCategory {
+  max-height: 0;
+  transform: translateX(-150%);
+  transition: transform 200ms ease-in-out;
+}
+
+.childrenWrapper > div.selectedCategory {
+  max-height: fit-content;
+  transform: translateX(0);
 }

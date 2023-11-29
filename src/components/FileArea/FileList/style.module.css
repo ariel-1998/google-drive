@@ -1,5 +1,17 @@
-.filesContainer {
+/* .filesContainer {
   display: flex;
   flex-direction: row;
   gap: 20px;
+} */
+
+.filesContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+  padding: 20px;
+  place-items: center;
+}
+
+.spinnerWrapper {
+  margin: 0 auto;
+  margin-top: 10px;
 }

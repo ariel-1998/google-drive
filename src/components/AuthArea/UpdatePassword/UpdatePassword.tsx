@@ -76,7 +76,7 @@ const UpdatePassword: React.FC = () => {
       </div>
 
       <div className={styles.footerWrapper}>
-        <Button theme="primary" type="submit" disabled={loading}>
+        <Button theme="secondary" type="submit" disabled={loading}>
           {loading ? <Spinner /> : "Update Password"}
         </Button>
       </div>

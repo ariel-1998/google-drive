@@ -4,7 +4,7 @@
   left: 0;
   /* background-color: #dddddd77; good color */
   /* background-color: #f8f9fa; darkMode */
-  background-color: #222;
+  background-color: var(--file-color);
   display: flex;
   justify-content: space-between;
   height: 70px;

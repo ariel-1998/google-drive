@@ -51,14 +51,17 @@ function App() {
           </Route>
         ) : (
           <Route Component={FilesProvider}>
-            <Route path="/update" Component={UnauthLayoutContainer}>
-              <Route path="email" Component={UpdateEmail} />
-              <Route path="password" Component={UpdatePassword} />
-              <Route path="profile" Component={UpdateProfile} />
-            </Route>
             <Route Component={Layout}>
+              {/** files routes */}
+
               <Route path="/" Component={Dashboard} />
               <Route path="/folder/:folderId" Component={Dashboard} />
+              {/** user routes */}
+              <Route path="/update">
+                <Route path="email" Component={UpdateEmail} />
+                <Route path="password" Component={UpdatePassword} />
+                <Route path="profile" Component={UpdateProfile} />
+              </Route>
             </Route>
           </Route>
         )}

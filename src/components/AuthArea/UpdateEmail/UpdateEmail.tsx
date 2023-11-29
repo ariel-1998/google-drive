@@ -58,7 +58,7 @@ const UpdateEmail: React.FC = () => {
       )}
       <Input type="text" placeholder="Email..." ref={emailRef} />
       <div className={styles.footerWrapper}>
-        <Button theme="primary" type="submit" disabled={loading}>
+        <Button theme="secondary" type="submit" disabled={loading}>
           {loading ? <Spinner /> : "Update Email"}
         </Button>
       </div>

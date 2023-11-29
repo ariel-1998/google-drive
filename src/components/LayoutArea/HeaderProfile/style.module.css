@@ -1,20 +1,20 @@
 .container {
   display: flex;
   position: relative;
-  cursor: pointer;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.icon {
+  color: white;
 }
 
 .image {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-}
-
-.icon {
-  color: white;
 }
 
 .list {
@@ -24,18 +24,19 @@
   border-radius: 10px;
   font-size: 1.1rem;
   font-weight: bold;
-  background-color: #ddd;
+  background-color: #fff;
   opacity: 0;
   padding-top: 5px;
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
   transition: all 300ms ease-out;
+  box-shadow: 1px 1px 1px #333;
   outline: none;
+  overflow: hidden;
 }
 
 .list.active {
   opacity: 1;
   top: 50%;
-  z-index: 2000;
 }
 
 .listItem,
@@ -45,15 +46,17 @@
   padding: 13px;
   padding-left: 20px;
   padding-right: 20px;
-  border-radius: 10px;
-  color: #111;
-  transition: all 300ms ease-in-out;
+  color: #354e54;
+  transition: all 200ms ease-in-out;
 }
 
 .listItem:not(.logout):not(.listHeader):hover {
   color: white;
-  background-color: #333;
-  transform: scale(1.05);
+  background-color: #354e54;
+}
+
+.logoutBtn:hover {
+  background-color: var(--grey-border-color);
 }
 
 .listItem.listHeader {
@@ -64,6 +67,7 @@
   padding-top: 5px;
   cursor: default;
   width: 100%;
+  padding-bottom: 10px;
 }
 
 .listItem.logout {
@@ -77,5 +81,4 @@
 
 .divider {
   margin: 0;
-  margin-top: 10px;
 }

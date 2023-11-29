@@ -1,24 +1,29 @@
 .shirnkWindow {
-  width: fit-content;
-  width: 250px;
+  width: 12ch;
+  /* width: 250px; */
   position: fixed;
   top: 50vh;
   right: 20px;
   padding-top: 5px;
   background-color: #ddd9;
   border-radius: 5px;
-  padding: 2px;
+  padding: 5px;
+  z-index: 1;
+  overflow: hidden;
+  transition: all 900ms ease-in-out;
+}
+
+.shirnkWindow.open {
+  width: 250px;
 }
 
 .shirnkWindow > span:first-child {
-  padding-left: 10px;
   cursor: pointer;
   color: red;
 }
 
 .transitionDiv {
   overflow: hidden;
-  width: 100%;
   flex-direction: column;
   gap: 20px;
   display: flex;
@@ -28,6 +33,7 @@
 }
 
 .transitionDiv.show {
+  transition-delay: 400ms;
   overflow: auto;
   max-height: 300px;
   padding: 20px;
@@ -48,13 +54,20 @@
 .detailsDiv {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 10px;
 }
 
 .detailsDiv > div {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 4px;
+}
+
+.detailsDiv > div > span:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  /* word-break: break-all; */
+  /* overflow-wrap: break-word; Add this property */
 }
 
 .fileDetailSpan {

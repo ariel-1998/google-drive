@@ -20,9 +20,8 @@
 }
 
 .secondary {
-  background-color: #66bb6a;
-  color: #333333;
-  /* font-size: 14px; */
+  background-color: var(--file-color);
+  color: #ffffff;
   font-weight: bold;
 }
 
