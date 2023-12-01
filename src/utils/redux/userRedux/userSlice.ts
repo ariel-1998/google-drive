@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import { User } from "firebase/auth";
 import { userThunks } from "./userThunks";
 
@@ -6,7 +6,7 @@ type UserState = User | null;
 
 export type Action = {
   status: "pending" | "rejected" | "fulfilled" | "idle";
-  error: string | null;
+  error: SerializedError | null;
 };
 
 type UserStateObj = {
@@ -42,6 +42,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     changeUser(state, action: PayloadAction<UserState>) {
+      console.log("userChanged", action);
       state.user = action.payload;
       return state;
     },
@@ -55,7 +56,7 @@ const userSlice = createSlice({
       handleStateStatus(state, "pending", "login");
     }),
       builder.addCase(signInAsync.rejected, (state, action) => {
-        handleStateStatus(state, "rejected", "login", action.error.message);
+        handleStateStatus(state, "rejected", "login", action.error);
       });
     builder.addCase(signInAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "login");
@@ -65,7 +66,7 @@ const userSlice = createSlice({
       handleStateStatus(state, "pending", "register");
     }),
       builder.addCase(registerAsync.rejected, (state, action) => {
-        handleStateStatus(state, "rejected", "register", action.error.message);
+        handleStateStatus(state, "rejected", "register", action.error);
       });
     builder.addCase(registerAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "register");
@@ -75,12 +76,7 @@ const userSlice = createSlice({
       handleStateStatus(state, "pending", "passwordReset");
     }),
       builder.addCase(resetPasswordAsync.rejected, (state, action) => {
-        handleStateStatus(
-          state,
-          "rejected",
-          "passwordReset",
-          action.error.message
-        );
+        handleStateStatus(state, "rejected", "passwordReset", action.error);
       });
     builder.addCase(resetPasswordAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "passwordReset");
@@ -90,12 +86,7 @@ const userSlice = createSlice({
       handleStateStatus(state, "pending", "emailUpdate");
     }),
       builder.addCase(updateEmailAsync.rejected, (state, action) => {
-        handleStateStatus(
-          state,
-          "rejected",
-          "emailUpdate",
-          action.error.message
-        );
+        handleStateStatus(state, "rejected", "emailUpdate", action.error);
       });
     builder.addCase(updateEmailAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "emailUpdate");
@@ -106,12 +97,7 @@ const userSlice = createSlice({
       handleStateStatus(state, "pending", "passwordUpdate");
     }),
       builder.addCase(updatePasswordAsync.rejected, (state, action) => {
-        handleStateStatus(
-          state,
-          "rejected",
-          "passwordUpdate",
-          action.error.message
-        );
+        handleStateStatus(state, "rejected", "passwordUpdate", action.error);
       });
     builder.addCase(updatePasswordAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "passwordUpdate");
@@ -121,7 +107,7 @@ const userSlice = createSlice({
       handleStateStatus(state, "pending", "logout");
     }),
       builder.addCase(logoutAsync.rejected, (state, action) => {
-        handleStateStatus(state, "rejected", "logout", action.error.message);
+        handleStateStatus(state, "rejected", "logout", action.error);
       });
     builder.addCase(logoutAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "logout");
@@ -136,7 +122,7 @@ const userSlice = createSlice({
           state,
           "rejected",
           "updateProfileNameAsync",
-          action.error.message
+          action.error
         );
       });
     builder.addCase(updateProfileNameAsync.fulfilled, (state) => {
@@ -151,7 +137,7 @@ const userSlice = createSlice({
           state,
           "rejected",
           "updateProfileImageAsync",
-          action.error.message
+          action.error
         );
       });
     builder.addCase(updateProfileImageAsync.fulfilled, (state) => {
@@ -189,7 +175,7 @@ export function handleStateStatus( //check if i can combine both functions into 
   state: UserStateObj,
   status: Status,
   method: Method,
-  error?: string
+  error?: SerializedError
 ) {
   switch (status) {
     case "pending": {
@@ -199,7 +185,9 @@ export function handleStateStatus( //check if i can combine both functions into 
     }
     case "rejected": {
       state.actions[method].status = "rejected";
-      state.actions[method].error = error || "Unknown Error has accured.";
+      state.actions[method].error = error || {
+        message: "Unknown Error has accured.",
+      };
       break;
     }
     case "fulfilled": {

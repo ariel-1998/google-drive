@@ -14,14 +14,19 @@ import {
 } from "../../../models/UserProfile";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../utils/firebaseConfig";
+import useFirestoreError from "../../../hooks/useFirestoreError";
+import useStorageError from "../../../hooks/useStorageError";
 
 const UpdateProfile: React.FC = () => {
   const { status, error } = useSelector(
     (state: RootState) => state.user.actions.updateProfileNameAsync
   );
+  useFirestoreError(error);
+  const storageErrorHandler = useStorageError();
+
   const { user } = useSelector((state: RootState) => state.user);
-  const [storageError, setStorageError] = useState("");
-  const loading = status === "pending";
+  const [postingImage, setPostingImage] = useState(false);
+  const loading = status === "pending" || postingImage;
   const fulfilled = status === "fulfilled";
 
   const {
@@ -34,20 +39,26 @@ const UpdateProfile: React.FC = () => {
 
   const submitUpdateName = (data: UserProfileForm) => {
     if (!user?.uid) return;
-    setStorageError("");
-    userService.updateName(data.name);
+    if (data.name !== user.displayName) {
+      userService.updateName(data.name || "");
+    }
     //might need to optimize image before uploading
     if (!data.image?.[0]) return;
+    setPostingImage(true);
     uploadImageFile(user.uid, data.image[0])
       .then((url) => {
-        userService.updateProfileImage(url as string);
+        userService.updateProfileImage(url);
       })
-      .catch((e) => setStorageError(e.message));
+      .catch((e) => storageErrorHandler(e))
+      .finally(() => setPostingImage(false));
   };
 
   const uploadImageFile = async (userId: string, file: File) => {
-    const storageRef = ref(storage, userId);
-    const data = await uploadBytes(storageRef, file);
+    const filePath = `profiles/${userId}`;
+    const storageRef = ref(storage, filePath);
+    const data = await uploadBytes(storageRef, file, {
+      customMetadata: { userId },
+    });
     const url = await getDownloadURL(data.ref);
     return url;
   };
@@ -55,11 +66,10 @@ const UpdateProfile: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit(submitUpdateName)}>
       <h2 className={styles.heading}>Update Profile</h2>
-      {!!error ||
-        (storageError && (
-          <div className={styles.errorHeading}>{error || storageError}</div>
-        ))}
-      {fulfilled && <div className={styles.successHeading}>Check Mail Box</div>}
+
+      {fulfilled && (
+        <div className={styles.successHeading}>Updated Successfully</div>
+      )}
       <Input
         type="text"
         placeholder="Update Name..."

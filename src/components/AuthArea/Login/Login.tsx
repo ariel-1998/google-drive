@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import styles from "./style.module.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import {
@@ -13,11 +13,14 @@ import Button from "../../Custom/Button/Button";
 import { Link } from "react-router-dom";
 import Spinner from "../../Custom/Spinner/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useFirestoreError from "../../../hooks/useFirestoreError";
+import AddFolderForm from "../../FolderArea/AddFolderForm/AddFolderForm";
 
 const Login: React.FC = () => {
   const { error, status } = useSelector(
     (state: RootState) => state.user.actions.login
   );
+  useFirestoreError(error);
 
   const loading = status === "pending";
 

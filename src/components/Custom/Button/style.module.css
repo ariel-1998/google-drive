@@ -15,18 +15,14 @@
   color: #ffffff;
 }
 
-.primary:hover {
+.primary:hover,
+.secondary:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .secondary {
   background-color: var(--file-color);
   color: #ffffff;
-  font-weight: bold;
-}
-
-.secondary:hover {
-  text-decoration: underline;
 }
 
 .danger {

@@ -6,17 +6,20 @@ import { foldersService } from "../../../services/foldersService";
 import { ROOT_FOLDER } from "../../../utils/redux/foldersRedux/foldersSlice";
 import styles from "./style.module.css";
 import Spinner from "../../Custom/Spinner/Spinner";
+import useFirestoreError from "../../../hooks/useFirestoreError";
 
 type FolderChildrenProps = {
   folderId: string;
 };
 
 const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
+  const { user } = useSelector((state: RootState) => state.user);
   const { currentFolder } = useSelector((state: RootState) => state.folders);
   const { status, error } = useSelector(
     (state: RootState) => state.folders.actions.getFolderChildren
   );
-  const { user } = useSelector((state: RootState) => state.user);
+  useFirestoreError(error);
+
   const fulfilled = status === "fulfilled";
   const loading = status === "pending";
 

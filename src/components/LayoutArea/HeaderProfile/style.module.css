@@ -46,17 +46,12 @@
   padding: 13px;
   padding-left: 20px;
   padding-right: 20px;
-  color: #354e54;
-  transition: all 200ms ease-in-out;
+  color: black;
+  transition: all 100ms ease-in-out;
 }
 
-.listItem:not(.logout):not(.listHeader):hover {
-  color: white;
-  background-color: #354e54;
-}
-
-.logoutBtn:hover {
-  background-color: var(--grey-border-color);
+.listItem:not(.listHeader):hover {
+  background-color: #6665;
 }
 
 .listItem.listHeader {

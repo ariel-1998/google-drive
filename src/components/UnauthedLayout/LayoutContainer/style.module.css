@@ -1,5 +1,5 @@
 .layout {
   min-height: 100dvh;
   display: grid;
-  place-content: center;
+  grid-template-rows: auto 1fr auto;
 }

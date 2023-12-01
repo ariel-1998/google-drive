@@ -7,26 +7,13 @@
   gap: 20px;
   max-width: 500px;
   width: 95vw;
+  margin: auto;
 }
 
 .heading {
   text-align: center;
   padding: 5px;
   margin: 0;
-}
-
-.errorHeading {
-  color: #ff6347;
-  font-size: 1.25rem;
-  font-weight: bold;
-  text-align: center;
-}
-
-.successHeading {
-  font-size: 1.25rem;
-  font-weight: bold;
-  text-align: center;
-  color: #66bb6a;
 }
 
 .footer {

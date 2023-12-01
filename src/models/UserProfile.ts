@@ -18,8 +18,14 @@ const image = z
 export const userProfileSchema = z.object({
   name: z
     .string()
-    .min(2, "Must contain 2-10 chracters")
-    .max(10, "Must contain 2-10 chracters"),
+    .optional()
+    .refine((name) => {
+      if (!name) return true;
+      if (name.length < 2 || name.length > 10) return false;
+      return true;
+    }),
+  // .min(2, "Must contain 2-10 chracters")
+  // .max(10, "Must contain 2-10 chracters"),
   image,
 });
 

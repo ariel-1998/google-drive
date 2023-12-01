@@ -2,7 +2,7 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styles from "./style.module.css";
 import Button from "../../Custom/Button/Button";
 import Spinner from "../../Custom/Spinner/Spinner";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import { foldersService } from "../../../services/foldersService";
 import {
@@ -11,23 +11,21 @@ import {
   Path,
 } from "../../../models/FolderModel";
 import Input from "../../Custom/Input/Input";
-// import { resetAddFolderStatus } from "../../../utils/redux/foldersRedux/foldersSlice";
+import useFirestoreError from "../../../hooks/useFirestoreError";
+import { toastService } from "../../../services/toastService";
 
 type AddFolderFormProps = {
   closeModal(): void;
 };
 
 const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
-  const folderNameRef = useRef<HTMLInputElement | null>(null);
-  const [error, setError] = useState("");
-
+  const { currentFolder } = useSelector((state: RootState) => state.folders);
   const { user } = useSelector((state: RootState) => state.user);
-  const { error: serverError, status } = useSelector(
+  const { error, status } = useSelector(
     (state: RootState) => state.folders.actions.addFolder
   );
-  const { currentFolder } = useSelector((state: RootState) => state.folders);
-
-  const dispatch = useDispatch();
+  useFirestoreError(error);
+  const folderNameRef = useRef<HTMLInputElement | null>(null);
 
   const fulfilled = status === "fulfilled";
   const loading = status === "pending";
@@ -36,8 +34,9 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
     e.preventDefault();
     if (!folderNameRef.current || !user?.uid || !currentFolder) return;
     const folderName = folderNameRef.current.value;
-    if (!folderName.trim()) return setError("Folder Name is Required.");
-    setError("");
+    if (!folderName.trim()) {
+      return toastService.error("Folder Name is Required.");
+    }
     const newFolder = createFolder(currentFolder, folderName, user.uid);
     foldersService.createFolder(newFolder);
   };
@@ -87,12 +86,6 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
   return (
     <form className={styles.form} onSubmit={submitCreateFolder}>
       <h2 className={styles.heading}>Create Folder</h2>
-
-      {(error || serverError) && (
-        <div className={styles.errorHeading}>
-          {error} {serverError}
-        </div>
-      )}
       <Input type="text" placeholder="Folder Name..." ref={folderNameRef} />
       <Button theme="primary" type="submit" disabled={loading}>
         {loading ? <Spinner /> : "Create"}

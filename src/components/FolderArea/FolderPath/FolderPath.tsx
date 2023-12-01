@@ -57,7 +57,7 @@ const FolderPath: React.FC<FolderPathProps> = ({ folderId }) => {
             }
             return (
               <span key={p.id}>
-                {/** need to limit string length to and add dots instead */}
+                {/** need to limit path amountand show only a part */}
                 {p?.name}
               </span>
             );

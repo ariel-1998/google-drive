@@ -23,9 +23,9 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
       ...folder.path,
       { name: folder.name, id: folder.id },
     ];
-    navigate(`/folder/${folder.id}`);
     dispatch(setPath(newPath));
     dispatch(setCurrentFolder(folder));
+    navigate(`/folder/${folder.id}`);
   };
 
   return (

@@ -4,13 +4,7 @@ import Login from "./components/AuthArea/Login/Login";
 import { auth } from "./utils/firebaseConfig";
 import { changeUser } from "./utils/redux/userRedux/userSlice";
 import Signup from "./components/AuthArea/Signup/Signup";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import UnauthLayoutContainer from "./components/UnauthedLayout/LayoutContainer/UnauthLayoutContainer";
 import ForgotPassword from "./components/AuthArea/ForgotPassword/ForgotPassword";
 import { RootState } from "./utils/redux/store";
@@ -30,6 +24,7 @@ function App() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       dispatch(changeUser(user));
+      //when user is defined setting the rootFolderId = user.uid
       ROOT_FOLDER.id = user?.uid || "";
       setLoading(false);
     });
@@ -66,10 +61,6 @@ function App() {
           </Route>
         )}
         {/** Redirect Route*/}
-        {/* <Route
-          path="*"
-          element={<Navigate to={user ? "/" : "/auth/login"} />}
-        /> */}
         <Route path="*" Component={RedirectRoute} />
       </Routes>
     </BrowserRouter>
@@ -83,8 +74,8 @@ const RedirectRoute: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    if (user) navigate("/");
-    else navigate("/auth/login");
+    if (user) navigate("/", { replace: true });
+    else navigate("/auth/login", { replace: true });
   }, [navigate]);
 
   return null;

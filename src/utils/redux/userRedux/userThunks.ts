@@ -25,6 +25,7 @@ class UserThunks {
   signInAsync = createAsyncThunk(
     "user/signInAsync",
     async (credentials: UserCredentials) => {
+      console.log(credentials);
       return await signInWithEmailAndPassword(
         auth,
         credentials.email,

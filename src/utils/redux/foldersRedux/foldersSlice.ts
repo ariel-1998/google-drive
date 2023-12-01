@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import { foldersThunks } from "./foldersThunks";
 import { FolderModel, Path } from "../../../models/FolderModel";
 import { Status, Action } from "../userRedux/userSlice";
@@ -36,14 +36,9 @@ const foldersSlice = createSlice({
     setCurrentFolder(state, action: PayloadAction<FolderModel>) {
       state.currentFolder = action.payload;
     },
-    // resetAddFolderStatus(state) {
-    //   state.actions.addFolder.status = "idle";
-    //   state.actions.addFolder.error = null;
-    // },
     setPath(state, action: PayloadAction<Path[]>) {
       state.path = action.payload;
     },
-
     resetFolderStateOnLogout() {
       return initialState;
     },
@@ -54,7 +49,7 @@ const foldersSlice = createSlice({
       handleStateStatus(state, "pending", "addFolder");
     });
     builder.addCase(createFolderAsync.rejected, (state, action) => {
-      handleStateStatus(state, "rejected", "addFolder", action.error.message);
+      handleStateStatus(state, "rejected", "addFolder", action.error);
     });
     builder.addCase(createFolderAsync.fulfilled, (state, action) => {
       handleStateStatus(state, "fulfilled", "addFolder");
@@ -69,16 +64,9 @@ const foldersSlice = createSlice({
       handleStateStatus(state, "pending", "getFolderChildren");
     });
     builder.addCase(getFolderChildrenAsync.rejected, (state, action) => {
-      handleStateStatus(
-        state,
-        "rejected",
-        "getFolderChildren",
-        action.error.message
-      );
+      handleStateStatus(state, "rejected", "getFolderChildren", action.error);
     });
     builder.addCase(getFolderChildrenAsync.fulfilled, (state, action) => {
-      console.log("payload");
-      console.log("fulfilled");
       const { payload } = action;
       handleStateStatus(state, "fulfilled", "getFolderChildren");
       state.folders[payload.id] = payload;
@@ -103,7 +91,7 @@ function handleStateStatus(
   state: FolderStateType,
   status: Status,
   method: Method,
-  error?: string
+  error?: SerializedError
 ) {
   switch (status) {
     case "pending": {
@@ -113,7 +101,9 @@ function handleStateStatus(
     }
     case "rejected": {
       state.actions[method].status = "rejected";
-      state.actions[method].error = error || "Unknown Error has accured.";
+      state.actions[method].error = error || {
+        message: "Unknown Error has accured.",
+      };
       break;
     }
     case "fulfilled": {

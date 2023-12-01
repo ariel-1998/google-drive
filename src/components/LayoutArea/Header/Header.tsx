@@ -6,9 +6,11 @@ import HeaderProfile from "../HeaderProfile/HeaderProfile";
 const Header: React.FC = () => {
   return (
     <header className={styles.header}>
-      <Link to={"/"} className={styles.title}>
-        <span>MiniDrive</span>
-      </Link>
+      <div>
+        <Link to={"/"} className={styles.title}>
+          <span>MiniDrive</span>
+        </Link>
+      </div>
       <HeaderProfile />
     </header>
   );

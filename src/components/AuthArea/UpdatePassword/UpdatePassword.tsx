@@ -10,15 +10,15 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useFirestoreError from "../../../hooks/useFirestoreError";
 
 type PasswordResetType = z.infer<typeof updatePasswordSchema>;
 
 const UpdatePassword: React.FC = () => {
-  const {
-    actions: {
-      passwordUpdate: { status, error },
-    },
-  } = useSelector((state: RootState) => state.user);
+  const { status, error } = useSelector(
+    (state: RootState) => state.user.actions.passwordUpdate
+  );
+  useFirestoreError(error);
 
   const loading = status === "pending";
   const fulfilled = status === "fulfilled";
@@ -39,12 +39,6 @@ const UpdatePassword: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit(submitUpdatePassword)}>
       <h2 className={styles.heading}>Update Password</h2>
-
-      {/* {(!!error ) && (
-          <div className={styles.errorHeading}>
-            {error ? error : userStateError}
-          </div>
-        )} */}
 
       {fulfilled && (
         <div className={styles.successHeading}>

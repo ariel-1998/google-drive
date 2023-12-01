@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../utils/redux/store";
 import {
+  StorageError,
   StorageReference,
   UploadTask,
   UploadTaskSnapshot,
@@ -21,8 +22,10 @@ import {
 } from "firebase/firestore";
 import { FileModel } from "../models/FileModel";
 import { Outlet } from "react-router-dom";
-import { resetAuthStateOnLogout } from "../utils/redux/userRedux/userSlice";
-import { resetFolderStateOnLogout } from "../utils/redux/foldersRedux/foldersSlice";
+import useStorageError from "../hooks/useStorageError";
+import { toastService } from "../services/toastService";
+import useFirestoreError from "../hooks/useFirestoreError";
+import { SerializedError } from "@reduxjs/toolkit";
 
 type FilesContextProps = {
   filesState: FileState[];
@@ -56,20 +59,23 @@ const FilesProvider: React.FC = () => {
   const { path, currentFolder } = useSelector(
     (state: RootState) => state.folders
   );
+  const storageErrorHandler = useStorageError();
+
   const { user } = useSelector((state: RootState) => state.user);
   const [filesState, setFilesState] = useState<FileState[]>([]);
   const [files, setFiles] = useState<FilesCache>({});
   const [fetchingFiles, setFetchingFiles] = useState(false);
-
-  const dispatch = useDispatch();
+  const [firestoreError, setFirestoreError] = useState<SerializedError | null>(
+    null
+  );
+  useFirestoreError(firestoreError);
 
   const handleUploadFiles = async (file: File) => {
     if (!path || !user?.uid) return;
     const filePath = `${path.map((p) => p.id).join("/")}/${file.name}`;
-    //add metadata {userId: user.uid} to storageRef
+
     const storageRef = ref(storage, filePath);
     const tempFileId = uuidV4();
-    // console.log(filePath);
 
     const newFileState: FileState = {
       fileName: file.name,
@@ -83,7 +89,6 @@ const FilesProvider: React.FC = () => {
     //check for file duplicates
     const fileDuplicate = await checkForFileDuplicate(storageRef);
     if (fileDuplicate) {
-      console.log("filedup");
       const errorFile: FileState = {
         ...newFileState,
         status: "Canceled",
@@ -104,7 +109,7 @@ const FilesProvider: React.FC = () => {
       (snapshot) => uploadTaskOnStateChange(snapshot, tempFileId),
       (error) => {
         // Handle unsuccessful uploads
-        console.log(error);
+        storageErrorHandler(error);
         uploadTaskOnError(tempFileId);
       },
       () => {
@@ -165,30 +170,36 @@ const FilesProvider: React.FC = () => {
         url: donloadUrl,
         uploadedAt: serverTimestamp(),
       };
-      const uploadedFile = await addDoc(dbCollectionRefs.files, fileObj);
 
-      const fileWithId: FileModel = {
-        ...fileObj,
-        id: uploadedFile.id,
-        uploadedAt: new Date(),
-      };
-      // checking if there is an array in cache
-      // if there is then we add the new file to it right away
-      // if there is no cache then dont store it at all (we will bring it with all the files)
-      setFiles((prevFiles) => {
-        const currentFolderId = path[path.length - 1].id;
-        if (prevFiles[currentFolderId]) {
-          return {
-            ...prevFiles,
-            [currentFolderId]: [...prevFiles[currentFolderId], fileWithId],
-          };
-        }
-        return prevFiles;
-      });
-      setFilesState((prevState) => {
-        return prevState.filter((file) => file.fileId !== tempFileId);
-      });
-    } catch (error: any) {
+      try {
+        const uploadedFile = await addDoc(dbCollectionRefs.files, fileObj);
+        const fileWithId: FileModel = {
+          ...fileObj,
+          id: uploadedFile.id,
+          uploadedAt: new Date(),
+        };
+        // checking if there is an array in cache
+        // if there is then we add the new file to it right away
+        // if there is no cache then dont store it at all (we will bring it with all the files)
+        setFiles((prevFiles) => {
+          const currentFolderId = path[path.length - 1].id;
+          if (prevFiles[currentFolderId]) {
+            return {
+              ...prevFiles,
+              [currentFolderId]: [...prevFiles[currentFolderId], fileWithId],
+            };
+          }
+          return prevFiles;
+        });
+        setFilesState((prevState) => {
+          return prevState.filter((file) => file.fileId !== tempFileId);
+        });
+      } catch (error) {
+        uploadTaskOnError(tempFileId);
+        setFirestoreError(error as SerializedError);
+      }
+    } catch (error) {
+      storageErrorHandler(error as StorageError);
       uploadTaskOnError(tempFileId);
     }
   }
@@ -207,8 +218,9 @@ const FilesProvider: React.FC = () => {
   async function checkForFileDuplicate(storageRef: StorageReference) {
     try {
       await getDownloadURL(storageRef);
+      toastService.info("File already Exist.");
       return true;
-    } catch (error: any) {
+    } catch (error) {
       return false;
     }
   }
@@ -235,7 +247,7 @@ const FilesProvider: React.FC = () => {
         return { ...prevFiles, [currentFolder.id]: currentFolderFiles };
       });
     } catch (error) {
-      console.log(error);
+      setFirestoreError(error as SerializedError);
     } finally {
       setFetchingFiles(false);
     }
@@ -251,8 +263,6 @@ const FilesProvider: React.FC = () => {
     return () => {
       setFilesState([]);
       setFiles({});
-      dispatch(resetAuthStateOnLogout());
-      dispatch(resetFolderStateOnLogout());
     };
   }, []);
 

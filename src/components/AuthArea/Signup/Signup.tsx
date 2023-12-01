@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./style.module.css";
 import { useForm } from "react-hook-form";
 import { userService } from "../../../services/userService";
@@ -13,11 +13,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import Spinner from "../../Custom/Spinner/Spinner";
+import useFirestoreError from "../../../hooks/useFirestoreError";
 
+//need to validate that there is such email before sgining up
+/////////
+/////////////
+////////////
 const Signup: React.FC = () => {
   const { error, status } = useSelector(
     (state: RootState) => state.user.actions.register
   );
+  useFirestoreError(error);
 
   const loading = status === "pending";
   const {
@@ -35,9 +41,8 @@ const Signup: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit(registerUser)}>
       <h2 className={styles.heading}>Sign Up</h2>
-      {/* {error && <div className={styles.errorHeading}>make a propper error</div>} */}
       <div>
-        <Input type="email" {...register("email")} placeholder="Email..." />
+        <Input type="text" {...register("email")} placeholder="Email..." />
         {errors.email && (
           <div className={styles.errorMsg}>{errors.email.message}</div>
         )}

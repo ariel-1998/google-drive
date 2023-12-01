@@ -2,20 +2,17 @@
   position: sticky;
   top: 0;
   left: 0;
-  /* background-color: #dddddd77; good color */
-  /* background-color: #f8f9fa; darkMode */
   background-color: var(--file-color);
   display: flex;
   justify-content: space-between;
-  height: 70px;
-  padding-left: 5%;
-  padding-right: 5%;
+  padding: 10px;
+  padding-inline: 15px;
   z-index: 1;
+  box-shadow: 0 0 5px black;
 }
 
 .title {
-  font-size: xxx-large;
+  font-size: min(14vw, 3rem);
   text-decoration: none;
   color: white;
-  padding: 10px;
 }
