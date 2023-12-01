@@ -51,6 +51,7 @@ export type FileState = {
   status: "Running" | "Paused" | "Canceled";
   error: boolean;
   errorMsg: string | null;
+  uploadTask?: UploadTask;
 };
 
 type FilesCache = Record<string, FileModel[]>;
@@ -99,17 +100,25 @@ const FilesProvider: React.FC = () => {
       return;
     }
 
-    setFilesState((prevState) => [...prevState, newFileState]);
     const uploadTask = uploadBytesResumable(storageRef, file, {
       customMetadata: { userId: user.uid },
     });
+    setFilesState((prevState) => [
+      ...prevState,
+      { ...newFileState, uploadTask },
+    ]);
 
     uploadTask.on(
       "state_changed",
       (snapshot) => uploadTaskOnStateChange(snapshot, tempFileId),
       (error) => {
         // Handle unsuccessful uploads
-        storageErrorHandler(error);
+        const currentTask = filesState.find(
+          (file) => file.fileId === tempFileId
+        );
+        if (currentTask?.status === "Canceled") {
+          storageErrorHandler(error);
+        }
         uploadTaskOnError(tempFileId);
       },
       () => {

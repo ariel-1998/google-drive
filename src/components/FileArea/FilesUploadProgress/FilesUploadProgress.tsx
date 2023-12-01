@@ -31,6 +31,17 @@ type FileUploadProps = {
 
 function FileUpload({ file }: FileUploadProps) {
   const { removeFileOnError } = useFiles();
+  function pauseAndRunTask() {
+    if (!file.uploadTask) return;
+    file.status === "Paused"
+      ? file.uploadTask.resume()
+      : file.uploadTask.pause();
+  }
+
+  const cancelTask = () => {
+    file.uploadTask && file.uploadTask.cancel();
+  };
+
   return (
     <div className={styles.fileWrapper}>
       <div className={styles.detailsDiv}>
