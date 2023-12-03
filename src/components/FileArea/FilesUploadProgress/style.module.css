@@ -1,6 +1,5 @@
 .shirnkWindow {
   width: 12ch;
-  /* width: 250px; */
   position: fixed;
   top: 50vh;
   right: 20px;
@@ -17,9 +16,18 @@
   width: 250px;
 }
 
-.shirnkWindow > span:first-child {
+.dragAndShowDiv {
+  display: flex;
+  gap: 5px;
+}
+
+.openListBtn {
   cursor: pointer;
   color: red;
+}
+
+.dragBtn {
+  color: rgb(82, 79, 79);
 }
 
 .transitionDiv {
@@ -43,7 +51,6 @@
   display: none;
 }
 
-/* single file*/
 .fileWrapper {
   display: flex;
   flex-direction: column;
@@ -66,8 +73,6 @@
 .detailsDiv > div > span:last-child {
   display: flex;
   flex-wrap: wrap;
-  /* word-break: break-all; */
-  /* overflow-wrap: break-word; Add this property */
 }
 
 .fileDetailSpan {
@@ -77,6 +82,23 @@
 .fileDetailSpan.error {
   font-weight: bold;
   color: var(--error-text-color);
+}
+
+.playIconsWrapper {
+  width: fit-content;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  gap: 9px;
+}
+
+.playIcon {
+  cursor: pointer;
+  background-color: black;
+  fill: #ddd9;
+  border-radius: 50%;
+  border: 1px solid black;
 }
 
 .progressBarWrapper {

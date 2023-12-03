@@ -1,6 +1,7 @@
 import { UserCredentials } from "../models/UserCredentials";
 import { store } from "../utils/redux/store";
 import {
+  // deleteUserAsync,
   logoutAsync,
   registerAsync,
   resetPasswordAsync,
@@ -43,6 +44,10 @@ class UserService {
   updateProfileImage(url: string) {
     store.dispatch(updateProfileImageAsync(url));
   }
+
+  // deleteUserAccount() {
+  //   store.dispatch(deleteUserAsync());
+  // }
 }
 
 export const userService = new UserService();

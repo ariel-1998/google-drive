@@ -62,6 +62,13 @@ const HeaderProfile: React.FC = () => {
         <Link to="/update/profile" onClick={closeMenu}>
           <ListItem>Update Profile</ListItem>
         </Link>
+        <Link
+          className={styles.deleteAccount}
+          to="/delete-account"
+          onClick={closeMenu}
+        >
+          <ListItem>Delete Account</ListItem>
+        </Link>
 
         <ListItem className={styles.logout}>
           <Logout className={styles.logoutBtn} callback={closeMenu} />
@@ -81,3 +88,13 @@ type ListItemProps = {
 function ListItem({ children, className }: ListItemProps) {
   return <div className={`${styles.listItem} ${className}`}>{children}</div>;
 }
+
+// function DeleteAccountBtn() {
+//   const navigate = useNavigate();
+
+//   const navigateToDeleteAcc = () => {
+//     navigate("/delete-account");
+//   };
+
+//   return <button onClick={navigateToDeleteAcc}>Delete</button>;
+// }

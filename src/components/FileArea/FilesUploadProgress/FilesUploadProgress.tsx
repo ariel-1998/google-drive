@@ -1,25 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, DragEvent, useRef } from "react";
 import { FileState, useFiles } from "../../../context/FilesProvider";
 import styles from "./style.module.css";
 import { AiOutlineClose } from "react-icons/ai";
+import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
+import Draggable from "react-draggable";
 
 const FilesUploadProgress: React.FC = () => {
+  const listRef = useRef<HTMLDivElement | null>(null);
   const { filesState } = useFiles();
   const [show, setShow] = useState(false);
 
   return (
-    <div className={`${styles.shirnkWindow} ${show && styles.open}`}>
-      <span onClick={() => setShow((pre) => !pre)}>
-        {!show ? "Show" : "Hide"} Upload
-      </span>
-      <div className={`${styles.transitionDiv} ${show && styles.show}`}>
-        {!!filesState.length
-          ? filesState.map((file) => (
-              <FileUpload file={file} key={file.fileId} />
-            ))
-          : "No Uploads"}
+    <Draggable nodeRef={listRef}>
+      <div
+        ref={listRef}
+        className={`${styles.shirnkWindow} ${show && styles.open}`}
+      >
+        <div className={styles.dragAndShowDiv}>
+          <span
+            className={styles.openListBtn}
+            onClick={() => setShow((pre) => !pre)}
+          >
+            {!show ? "Show" : "Hide"} Upload
+          </span>
+          <span className={styles.dragBtn}>Drag</span>
+        </div>
+        <div className={`${styles.transitionDiv} ${show && styles.show}`}>
+          {!!filesState.length
+            ? filesState.map((file) => (
+                <FileUpload file={file} key={file.fileId} />
+              ))
+            : "No Uploads"}
+        </div>
       </div>
-    </div>
+    </Draggable>
   );
 };
 
@@ -43,7 +57,7 @@ function FileUpload({ file }: FileUploadProps) {
   };
 
   return (
-    <div className={styles.fileWrapper}>
+    <div className={styles.fileWrapper} onDoubleClick={cancelTask}>
       <div className={styles.detailsDiv}>
         <div>
           <span className={styles.fileDetailSpan}>Name:</span>
@@ -59,19 +73,44 @@ function FileUpload({ file }: FileUploadProps) {
               error:
             </span>
             <span>
-              {file.errorMsg ? file.errorMsg : "Could not upload file."}
+              {file.status === "Canceled"
+                ? "Upload was Canceled"
+                : file.errorMsg
+                ? file.errorMsg
+                : "Could not upload file."}
             </span>
           </div>
         )}
       </div>
-      {file.error && (
+      {file.error ? (
         <i
           className={styles.deleteIcon}
           onClick={() => removeFileOnError(file.fileId)}
         >
           Remove <AiOutlineClose />
         </i>
+      ) : (
+        <i className={styles.playIconsWrapper}>
+          {file.status === "Running" ? (
+            <>
+              Pause:{" "}
+              <FaCirclePlay
+                onClick={pauseAndRunTask}
+                className={styles.playIcon}
+              />
+            </>
+          ) : (
+            <>
+              Play:{" "}
+              <FaCirclePause
+                onClick={pauseAndRunTask}
+                className={styles.playIcon}
+              />
+            </>
+          )}
+        </i>
       )}
+
       <div className={styles.progressBarWrapper}>
         <div
           className={styles.percetage}

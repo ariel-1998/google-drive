@@ -20,6 +20,7 @@ type UserStateObj = {
     logout: Action;
     updateProfileNameAsync: Action;
     updateProfileImageAsync: Action;
+    deleteUserAsync: Action;
   };
 };
 
@@ -155,6 +156,7 @@ export const {
   updatePasswordAsync,
   updateProfileNameAsync,
   updateProfileImageAsync,
+  // deleteUserAsync,
 } = userThunks;
 export const { changeUser, resetAuthStateOnLogout } = userSlice.actions;
 export default userSlice.reducer;
@@ -169,6 +171,7 @@ type Method =
   | "logout"
   | "updateProfileNameAsync"
   | "updateProfileImageAsync";
+// | "deleteUserAsync";
 
 export function handleStateStatus( //check if i can combine both functions into 1 in both slices
   // state.actions: T  instead of state

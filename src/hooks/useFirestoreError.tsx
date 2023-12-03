@@ -61,44 +61,44 @@ function firebaseErrorExtructor({
     }
 
     case "auth/invalid-display-name": {
-      errorMessage = "Invalid Name";
+      errorMessage += "Invalid Name";
       break;
     }
 
     case "auth/invalid-email-verified":
     case "auth/invalid-email": {
-      errorMessage = "Invalid Email";
+      errorMessage += "Invalid Email";
       break;
     }
 
     case "auth/id-token-expired":
     case "auth/session-cookie-expired": {
-      errorMessage = "Permission Expired, Please Login again.";
+      errorMessage += "Permission Expired, Please Login again.";
       break;
     }
 
     case "auth/invalid-login-credentials": {
-      errorMessage = "Email or Password are Incorrect.";
+      errorMessage += "Email or Password are Incorrect.";
       break;
     }
 
     case "permission-denied": {
-      errorMessage = "UnAuthorized!";
+      errorMessage += "UnAuthorized!";
       break;
     }
 
     case "not-found": {
-      errorMessage = "NOT FOUND.";
+      errorMessage += "NOT FOUND.";
       break;
     }
 
     case "unknown": {
-      errorMessage = "Unknown error has accured.";
+      errorMessage += "Unknown error has accured.";
       break;
     }
 
     case "unauthenticated": {
-      errorMessage = "Permission Expired, Please Login again.";
+      errorMessage += "Permission Expired, Please Login again.";
       break;
     }
 

@@ -15,6 +15,7 @@ import Dashboard from "./components/LayoutArea/Dashboard/Dashboard";
 import { ROOT_FOLDER } from "./utils/redux/foldersRedux/foldersSlice";
 import UpdateProfile from "./components/AuthArea/UpdateProfile/UpdateProfile";
 import FilesProvider from "./context/FilesProvider";
+import DeleteAccount from "./components/AuthArea/DeleteAccount/DeleteAccount";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,7 @@ function App() {
                 <Route path="password" Component={UpdatePassword} />
                 <Route path="profile" Component={UpdateProfile} />
               </Route>
+              <Route path="/delete-account" Component={DeleteAccount} />
             </Route>
           </Route>
         )}

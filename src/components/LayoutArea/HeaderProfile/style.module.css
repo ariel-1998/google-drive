@@ -51,7 +51,7 @@
 }
 
 .listItem:not(.listHeader):hover {
-  background-color: #6665;
+  background-color: rgba(167, 158, 158, 0.333);
 }
 
 .listItem.listHeader {
@@ -63,6 +63,10 @@
   cursor: default;
   width: 100%;
   padding-bottom: 10px;
+}
+
+.deleteAccount > .listItem {
+  color: #d2cf34;
 }
 
 .listItem.logout {
