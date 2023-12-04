@@ -12,7 +12,7 @@ const useFirestoreError: React.FC<UseFirestoreErrorProps> = (error) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!error || !error.code || !error.message) return;
+    if (!error || !error.message) return;
     const { code, message } = error;
     const { shouldReLogin, errorMsg } = firebaseErrorExtructor({
       code,
@@ -37,7 +37,7 @@ type FirebaseErrorExtructorReturnType = {
 
 type FirebaseErrorExtructorProps = {
   message: string;
-  code: string;
+  code?: string;
 };
 
 function firebaseErrorExtructor({
@@ -78,7 +78,7 @@ function firebaseErrorExtructor({
     }
 
     case "auth/invalid-login-credentials": {
-      errorMessage += "Email or Password are Incorrect.";
+      errorMessage += "Incorrect credentials.";
       break;
     }
 
@@ -112,7 +112,10 @@ function firebaseErrorExtructor({
     "unauthenticated",
   ];
 
-  const shouldReLogin = authPermissionErrors.includes(code);
+  let shouldReLogin = false;
+  if (code) {
+    shouldReLogin = authPermissionErrors.includes(code);
+  }
   return {
     errorMsg: errorMessage,
     shouldReLogin,

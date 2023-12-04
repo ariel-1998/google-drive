@@ -1,31 +1,43 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { UserCredentials } from "../../../models/UserCredentials";
 import {
+  UpdatePassword,
+  UserCredentials,
+} from "../../../models/UserCredentials";
+import {
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
+  reauthenticateWithCredential,
+  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   updatePassword,
   updateProfile,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
-import { auth } from "../../firebaseConfig";
-import { store } from "../store";
+import { auth, db } from "../../firebaseConfig";
+import { runTransaction } from "firebase/firestore";
 
 class UserThunks {
+  private onUserDelete() {
+    // await runTransaction(db,)
+  }
+
   registerAsync = createAsyncThunk(
     "user/registerAsync",
     async (credentials: UserCredentials) => {
-      return await createUserWithEmailAndPassword(
+      const data = await createUserWithEmailAndPassword(
         auth,
         credentials.email,
         credentials.password
       );
+      await sendEmailVerification(data.user, {
+        url: import.meta.env.VITE_WEBSITE_BASE_URL,
+      });
     }
   );
   signInAsync = createAsyncThunk(
     "user/signInAsync",
     async (credentials: UserCredentials) => {
-      console.log(credentials);
       return await signInWithEmailAndPassword(
         auth,
         credentials.email,
@@ -41,20 +53,34 @@ class UserThunks {
   );
   updateEmailAsync = createAsyncThunk(
     "user/updateEmailAsync",
-    async (email: string) => {
-      const { user } = store.getState().user;
-      if (!user) throw new Error("User not logged in.");
-      return await verifyBeforeUpdateEmail(user, email);
+    async (credentials: UserCredentials) => {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Unauthenticated, Please Login again.");
+
+      const { email: newEmail, password } = credentials;
+      const credential = EmailAuthProvider.credential(user?.email!, password);
+      await reauthenticateWithCredential(user!, credential);
+      await verifyBeforeUpdateEmail(user, newEmail, {
+        url: import.meta.env.VITE_WEBSITE_BASE_URL,
+      });
     }
   );
   updatePasswordAsync = createAsyncThunk(
     "user/updatePasswordAsync",
-    async (password: string) => {
-      const { user } = store.getState().user;
+    async (passwords: UpdatePassword) => {
+      const user = auth.currentUser;
+      const { newPassword, currentPassword } = passwords;
+      const credential = EmailAuthProvider.credential(
+        user?.email!,
+        currentPassword
+      );
+
       if (!user) throw new Error("User not logged in.");
-      return await updatePassword(user, password);
+      await reauthenticateWithCredential(user!, credential);
+      await updatePassword(user, newPassword);
     }
   );
+
   logoutAsync = createAsyncThunk("user/logoutAsync", async () => {
     await auth.signOut();
   });
@@ -76,6 +102,17 @@ class UserThunks {
       await updateProfile(auth.currentUser, {
         photoURL: url,
       });
+    }
+  );
+
+  deleteAccount = createAsyncThunk(
+    "user/deleteAccount",
+    async (password: string) => {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not logged in!");
+      const credential = EmailAuthProvider.credential(user.email!, password);
+      await reauthenticateWithCredential(user, credential);
+      await user.delete();
     }
   );
 }

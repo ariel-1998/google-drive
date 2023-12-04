@@ -32,8 +32,10 @@ const UpdatePassword: React.FC = () => {
   });
 
   const submitUpdatePassword = (data: PasswordResetType) => {
-    console.log(data);
-    userService.updatePassword(data.password);
+    userService.updatePassword({
+      newPassword: data.newPassword,
+      currentPassword: data.oldPassword,
+    });
   };
 
   return (
@@ -49,11 +51,21 @@ const UpdatePassword: React.FC = () => {
       <div>
         <Input
           type="password"
-          placeholder="Password..."
-          {...register("password")}
+          placeholder="Old password..."
+          {...register("oldPassword")}
         />
-        {errors.password && (
-          <div className={styles.errorMsg}>{errors.password.message}</div>
+        {errors.oldPassword && (
+          <div className={styles.errorMsg}>{errors.oldPassword.message}</div>
+        )}
+      </div>
+      <div>
+        <Input
+          type="password"
+          placeholder="New password..."
+          {...register("newPassword")}
+        />
+        {errors.newPassword && (
+          <div className={styles.errorMsg}>{errors.newPassword.message}</div>
         )}
       </div>
       <div>

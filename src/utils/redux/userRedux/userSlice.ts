@@ -20,7 +20,8 @@ type UserStateObj = {
     logout: Action;
     updateProfileNameAsync: Action;
     updateProfileImageAsync: Action;
-    deleteUserAsync: Action;
+    // deleteUserAsync: Action;
+    deleteAccount: Action;
   };
 };
 
@@ -35,6 +36,7 @@ let initialState = {
     emailUpdate: { status: "idle", error: null },
     passwordUpdate: { status: "idle", error: null },
     logout: { status: "idle", error: null },
+    deleteAccount: { status: "idle", error: null },
   },
 } as UserStateObj;
 
@@ -144,6 +146,16 @@ const userSlice = createSlice({
     builder.addCase(updateProfileImageAsync.fulfilled, (state) => {
       handleStateStatus(state, "fulfilled", "updateProfileImageAsync");
     });
+    //delete account
+    builder.addCase(deleteAccount.pending, (state) => {
+      handleStateStatus(state, "pending", "deleteAccount");
+    }),
+      builder.addCase(deleteAccount.rejected, (state, action) => {
+        handleStateStatus(state, "rejected", "deleteAccount", action.error);
+      });
+    builder.addCase(deleteAccount.fulfilled, (state) => {
+      handleStateStatus(state, "fulfilled", "deleteAccount");
+    });
   },
 });
 
@@ -156,7 +168,7 @@ export const {
   updatePasswordAsync,
   updateProfileNameAsync,
   updateProfileImageAsync,
-  // deleteUserAsync,
+  deleteAccount,
 } = userThunks;
 export const { changeUser, resetAuthStateOnLogout } = userSlice.actions;
 export default userSlice.reducer;
@@ -170,8 +182,8 @@ type Method =
   | "passwordUpdate"
   | "logout"
   | "updateProfileNameAsync"
-  | "updateProfileImageAsync";
-// | "deleteUserAsync";
+  | "updateProfileImageAsync"
+  | "deleteAccount";
 
 export function handleStateStatus( //check if i can combine both functions into 1 in both slices
   // state.actions: T  instead of state

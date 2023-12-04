@@ -1,6 +1,7 @@
-import { UserCredentials } from "../models/UserCredentials";
+import { UpdatePassword, UserCredentials } from "../models/UserCredentials";
 import { store } from "../utils/redux/store";
 import {
+  deleteAccount,
   // deleteUserAsync,
   logoutAsync,
   registerAsync,
@@ -29,12 +30,12 @@ class UserService {
     store.dispatch(resetPasswordAsync(email));
   }
 
-  updateEmail(email: string) {
-    store.dispatch(updateEmailAsync(email));
+  updateEmail(credentials: UserCredentials) {
+    store.dispatch(updateEmailAsync(credentials));
   }
 
-  updatePassword(password: string) {
-    store.dispatch(updatePasswordAsync(password));
+  updatePassword(passwords: UpdatePassword) {
+    store.dispatch(updatePasswordAsync(passwords));
   }
 
   updateName(name: string) {
@@ -45,9 +46,9 @@ class UserService {
     store.dispatch(updateProfileImageAsync(url));
   }
 
-  // deleteUserAccount() {
-  //   store.dispatch(deleteUserAsync());
-  // }
+  deleteUserAccount(password: string) {
+    store.dispatch(deleteAccount(password));
+  }
 }
 
 export const userService = new UserService();

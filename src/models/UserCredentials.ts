@@ -27,15 +27,21 @@ export const credentialsRegisterSchema = credentialsSchema.refine(
 
 export const updatePasswordSchema = z
   .object({
-    password: passwordSchema,
+    oldPassword: z.string({ required_error: "Old password is required." }),
+    newPassword: passwordSchema,
     validatePassword: z.string().optional(),
   })
   .refine(
-    ({ password, validatePassword }) => {
-      if (password !== validatePassword) return false;
+    ({ newPassword, validatePassword }) => {
+      if (newPassword !== validatePassword) return false;
       return true;
     },
     { path: ["validatePassword"], message: "Passwords do Not match." }
   );
 
 export type CredentialsSchemaType = z.infer<typeof credentialsSchema>;
+
+export type UpdatePassword = {
+  currentPassword: string;
+  newPassword: string;
+};
