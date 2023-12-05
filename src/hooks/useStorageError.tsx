@@ -1,13 +1,9 @@
 import { StorageError } from "firebase/storage";
 import { toastService } from "../services/toastService";
-import { userService } from "../services/userService";
-import { resetFolderStateOnLogout } from "../utils/redux/foldersRedux/foldersSlice";
-import { resetAuthStateOnLogout } from "../utils/redux/userRedux/userSlice";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const useStorageError = () => {
-  const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const errorExtructor = (error: StorageError) => {
     const { code } = error;
     switch (code) {
@@ -39,11 +35,7 @@ const useStorageError = () => {
   return (error: StorageError) => {
     const errMessage = errorExtructor(error);
     toastService.error(errMessage);
-    if (error.code === "storage/unauthenticated") {
-      userService.logout();
-      dispatch(resetAuthStateOnLogout());
-      dispatch(resetFolderStateOnLogout());
-    }
+    if (error.code === "storage/unauthenticated") navigate("/logout");
   };
 };
 

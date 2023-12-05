@@ -1,11 +1,13 @@
 import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import { foldersThunks } from "./foldersThunks";
 import { FolderModel, Path } from "../../../models/FolderModel";
-import { Status, Action } from "../userRedux/userSlice";
+import { Status, Action, initialAction } from "../userRedux/userSlice";
+
+export type FolderActions = Record<FolderMethods, Action>;
 
 type FolderStateType = {
   folders: Record<string, FolderModel>;
-  actions: Record<Method, Action>;
+  actions: FolderActions;
   currentFolder: FolderModel | null;
   path: Path[];
 };
@@ -23,8 +25,8 @@ const initialState = {
   currentFolder: null,
   folders: {},
   actions: {
-    addFolder: { status: "idle", error: null },
-    getFolderChildren: { status: "idle", error: null },
+    addFolder: { ...initialAction },
+    getFolderChildren: { ...initialAction },
   },
   path: [],
 } as FolderStateType;
@@ -41,6 +43,11 @@ const foldersSlice = createSlice({
     },
     resetFolderStateOnLogout() {
       return initialState;
+    },
+    resetFolderActionState(state, action: PayloadAction<FolderMethods>) {
+      const method = action.payload;
+      state.actions[method] = { ...initialAction };
+      return state;
     },
   },
   extraReducers(builder) {
@@ -79,41 +86,44 @@ export const { createFolderAsync, getFolderChildrenAsync, getFolderAsync } =
   foldersThunks;
 export const {
   setCurrentFolder,
-  // resetAddFolderStatus,
+  resetFolderActionState,
   setPath,
   resetFolderStateOnLogout,
 } = foldersSlice.actions;
 export default foldersSlice.reducer;
 
-type Method = "addFolder" | "getFolderChildren";
+export type FolderMethods = "addFolder" | "getFolderChildren";
 
 function handleStateStatus(
   state: FolderStateType,
   status: Status,
-  method: Method,
+  method: FolderMethods,
   error?: SerializedError
 ) {
   switch (status) {
     case "pending": {
-      state.actions[method].status = "pending";
+      state.actions[method].isLoading = true;
+      state.actions[method].isError = false;
       state.actions[method].error = null;
       break;
     }
     case "rejected": {
-      state.actions[method].status = "rejected";
+      state.actions[method].isLoading = false;
+      state.actions[method].isError = true;
       state.actions[method].error = error || {
         message: "Unknown Error has accured.",
       };
       break;
     }
     case "fulfilled": {
-      state.actions[method].status = "fulfilled";
       state.actions[method].error = null;
+      state.actions[method].isSuccessful = true;
+      state.actions[method].isLoading = false;
+      state.actions[method].isError = false;
       break;
     }
     default: {
-      state.actions[method].status = "idle";
-      state.actions[method].error = null;
+      state.actions[method] = { ...initialAction };
     }
   }
 }

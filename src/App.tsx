@@ -5,7 +5,7 @@ import { auth } from "./utils/firebaseConfig";
 import { changeUser } from "./utils/redux/userRedux/userSlice";
 import Signup from "./components/AuthArea/Signup/Signup";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
-import UnauthLayoutContainer from "./components/UnauthedLayout/LayoutContainer/UnauthLayoutContainer";
+import UnauthLayoutContainer from "./components/UnauthedLayoutArea/LayoutContainer/UnauthLayoutContainer";
 import ForgotPassword from "./components/AuthArea/ForgotPassword/ForgotPassword";
 import { RootState } from "./utils/redux/store";
 import Layout from "./components/LayoutArea/Layout/Layout";
@@ -16,6 +16,7 @@ import { ROOT_FOLDER } from "./utils/redux/foldersRedux/foldersSlice";
 import UpdateProfile from "./components/AuthArea/UpdateProfile/UpdateProfile";
 import FilesProvider from "./context/FilesProvider";
 import DeleteAccount from "./components/AuthArea/DeleteAccount/DeleteAccount";
+import Logout from "./components/AuthArea/Logout/Logout";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -60,6 +61,7 @@ function App() {
               </Route>
               <Route path="/delete-account" Component={DeleteAccount} />
             </Route>
+            <Route path="/logout" Component={Logout} />
           </Route>
         )}
         {/** Redirect Route*/}

@@ -16,18 +16,26 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../utils/firebaseConfig";
 import useFirestoreError from "../../../hooks/useFirestoreError";
 import useStorageError from "../../../hooks/useStorageError";
+import useResetActionState from "../../../hooks/useResetActionState";
 
 const UpdateProfile: React.FC = () => {
-  const { status, error } = useSelector(
+  const { error, isLoading, isSuccessful } = useSelector(
     (state: RootState) => state.user.actions.updateProfileNameAsync
   );
+  useResetActionState({
+    action: "user",
+    actionType: "updateProfileImageAsync",
+  });
+  useResetActionState({
+    action: "user",
+    actionType: "updateProfileNameAsync",
+  });
   useFirestoreError(error);
   const storageErrorHandler = useStorageError();
 
   const { user } = useSelector((state: RootState) => state.user);
   const [postingImage, setPostingImage] = useState(false);
-  const loading = status === "pending" || postingImage;
-  const fulfilled = status === "fulfilled";
+  const loading = isLoading || postingImage;
 
   const {
     register,
@@ -67,7 +75,7 @@ const UpdateProfile: React.FC = () => {
     <form className={styles.form} onSubmit={handleSubmit(submitUpdateName)}>
       <h2 className={styles.heading}>Update Profile</h2>
 
-      {fulfilled && (
+      {isSuccessful && (
         <div className={styles.successHeading}>Updated Successfully</div>
       )}
       <Input
@@ -89,7 +97,7 @@ const UpdateProfile: React.FC = () => {
       {errors.image && (
         <div className={styles.errorMsg}>{errors.image.message}</div>
       )}
-      <Button theme="secondary" type="submit" disabled={loading}>
+      <Button theme="authPrimary" type="submit" disabled={loading}>
         {loading ? <Spinner /> : "Update Profile"}
       </Button>
     </form>

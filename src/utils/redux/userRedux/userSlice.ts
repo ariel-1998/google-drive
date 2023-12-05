@@ -5,38 +5,37 @@ import { userThunks } from "./userThunks";
 type UserState = User | null;
 
 export type Action = {
-  status: "pending" | "rejected" | "fulfilled" | "idle";
+  isLoading: boolean;
+  isError: boolean;
+  isSuccessful: boolean;
   error: SerializedError | null;
 };
+export type UserActions = Record<AuthMethods, Action>;
 
-type UserStateObj = {
+export type UserStateObj = {
   user: UserState;
-  actions: {
-    login: Action;
-    register: Action;
-    passwordReset: Action;
-    emailUpdate: Action;
-    passwordUpdate: Action;
-    logout: Action;
-    updateProfileNameAsync: Action;
-    updateProfileImageAsync: Action;
-    // deleteUserAsync: Action;
-    deleteAccount: Action;
-  };
+  actions: UserActions;
+};
+
+export const initialAction: Action = {
+  error: null,
+  isError: false,
+  isLoading: false,
+  isSuccessful: false,
 };
 
 let initialState = {
   user: null,
   actions: {
-    updateProfileImageAsync: { status: "idle", error: null },
-    updateProfileNameAsync: { status: "idle", error: null },
-    login: { status: "idle", error: null },
-    register: { status: "idle", error: null },
-    passwordReset: { status: "idle", error: null },
-    emailUpdate: { status: "idle", error: null },
-    passwordUpdate: { status: "idle", error: null },
-    logout: { status: "idle", error: null },
-    deleteAccount: { status: "idle", error: null },
+    updateProfileImageAsync: { ...initialAction },
+    updateProfileNameAsync: { ...initialAction },
+    login: { ...initialAction },
+    register: { ...initialAction },
+    passwordReset: { ...initialAction },
+    emailUpdate: { ...initialAction },
+    passwordUpdate: { ...initialAction },
+    logout: { ...initialAction },
+    deleteAccount: { ...initialAction },
   },
 } as UserStateObj;
 
@@ -45,12 +44,17 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     changeUser(state, action: PayloadAction<UserState>) {
-      console.log("userChanged", action);
       state.user = action.payload;
       return state;
     },
     resetAuthStateOnLogout() {
       return initialState;
+    },
+    resetUserActionState(state, action: PayloadAction<AuthMethods>) {
+      const method = action.payload;
+      state.actions[method] = { ...initialAction };
+      console.log(initialAction);
+      return state;
     },
   },
   extraReducers(builder) {
@@ -170,11 +174,12 @@ export const {
   updateProfileImageAsync,
   deleteAccount,
 } = userThunks;
-export const { changeUser, resetAuthStateOnLogout } = userSlice.actions;
+export const { changeUser, resetAuthStateOnLogout, resetUserActionState } =
+  userSlice.actions;
 export default userSlice.reducer;
 
 export type Status = "pending" | "rejected" | "fulfilled";
-type Method =
+export type AuthMethods =
   | "login"
   | "register"
   | "passwordReset"
@@ -189,17 +194,19 @@ export function handleStateStatus( //check if i can combine both functions into 
   // state.actions: T  instead of state
   state: UserStateObj,
   status: Status,
-  method: Method,
+  method: AuthMethods,
   error?: SerializedError
 ) {
   switch (status) {
     case "pending": {
-      state.actions[method].status = "pending";
+      state.actions[method].isLoading = true;
+      state.actions[method].isError = false;
       state.actions[method].error = null;
       break;
     }
     case "rejected": {
-      state.actions[method].status = "rejected";
+      state.actions[method].isLoading = false;
+      state.actions[method].isError = true;
       state.actions[method].error = error || {
         message: "Unknown Error has accured.",
       };
@@ -207,12 +214,14 @@ export function handleStateStatus( //check if i can combine both functions into 
     }
     case "fulfilled": {
       state.actions[method].error = null;
-      state.actions[method].status = "fulfilled";
+      state.actions[method].isSuccessful = true;
+      state.actions[method].isLoading = false;
+      state.actions[method].isError = false;
       break;
     }
+
     default: {
-      state.actions[method].error = null;
-      state.actions[method].status = "idle";
+      state.actions[method] = { ...initialAction };
     }
   }
 }

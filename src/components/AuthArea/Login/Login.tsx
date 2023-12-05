@@ -14,15 +14,17 @@ import { Link } from "react-router-dom";
 import Spinner from "../../Custom/Spinner/Spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useFirestoreError from "../../../hooks/useFirestoreError";
-import AddFolderForm from "../../FolderArea/AddFolderForm/AddFolderForm";
+import useResetActionState from "../../../hooks/useResetActionState";
 
 const Login: React.FC = () => {
-  const { error, status } = useSelector(
+  const { error, isLoading } = useSelector(
     (state: RootState) => state.user.actions.login
   );
   useFirestoreError(error);
-
-  const loading = status === "pending";
+  useResetActionState({
+    action: "user",
+    actionType: "login",
+  });
 
   const {
     register,
@@ -60,8 +62,8 @@ const Login: React.FC = () => {
           <Link to="/auth/password-reset">Reset Password</Link>
         </div>
       </div>
-      <Button theme="primary" type="submit" disabled={loading}>
-        {loading ? <Spinner /> : "Log In"}
+      <Button theme="primary" type="submit" disabled={isLoading}>
+        {isLoading ? <Spinner /> : "Log In"}
       </Button>
       <div className={styles.footer}>
         <span>Dont have an account yet?</span>

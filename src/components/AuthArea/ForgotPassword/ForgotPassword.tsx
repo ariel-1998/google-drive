@@ -10,17 +10,18 @@ import Spinner from "../../Custom/Spinner/Spinner";
 import { Link } from "react-router-dom";
 import { toastService } from "../../../services/toastService";
 import useFirestoreError from "../../../hooks/useFirestoreError";
+import useResetActionState from "../../../hooks/useResetActionState";
 
 const ForgotPassword: React.FC = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
-  const { status, error } = useSelector(
+  const { isLoading, isSuccessful, error } = useSelector(
     (state: RootState) => state.user.actions.passwordReset
   );
   useFirestoreError(error);
-
-  const fulfilled = status === "fulfilled";
-  const loading = status === "pending";
-
+  useResetActionState({
+    action: "user",
+    actionType: "passwordReset",
+  });
   const submitResetPassword = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!emailRef.current) return;
@@ -34,17 +35,17 @@ const ForgotPassword: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!fulfilled) return;
+    if (!isSuccessful) return;
     //check if code is related to not logged in the log him out
     toastService.success("Check Mail Box for completion.");
-  }, [fulfilled]);
+  }, [isSuccessful]);
 
   return (
     <form className={styles.form} onSubmit={submitResetPassword}>
       <h2 className={styles.heading}>Reset Password</h2>
       <Input type="text" placeholder="Email..." ref={emailRef} />
-      <Button theme="primary" type="submit" disabled={loading}>
-        {loading ? <Spinner /> : "Reset Password"}
+      <Button theme="primary" type="submit" disabled={isLoading}>
+        {isLoading ? <Spinner /> : "Reset Password"}
       </Button>
       <div className={styles.footer}>
         <Link to="/auth/login">Back To Login</Link>

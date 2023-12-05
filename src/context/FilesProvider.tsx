@@ -31,6 +31,8 @@ type FilesContextProps = {
   filesState: FileState[];
   files: FilesCache;
   fetchingFiles: boolean;
+  showUploads: boolean;
+  toggleShowUploads(): void;
   handleUploadFiles: (file: File) => void;
   getCurrentFolderFiles(): Promise<void>;
   removeFileOnError(fileId: string): void;
@@ -70,6 +72,10 @@ const FilesProvider: React.FC = () => {
     null
   );
   useFirestoreError(firestoreError);
+  const [showUploads, setShowUploads] = useState(true);
+  const toggleShowUploads = () => {
+    setShowUploads((prev) => !prev);
+  };
 
   const handleUploadFiles = async (file: File) => {
     if (!path || !user?.uid) return;
@@ -99,7 +105,7 @@ const FilesProvider: React.FC = () => {
       setFilesState((prevState) => [...prevState, errorFile]);
       return;
     }
-
+    if (!showUploads) setShowUploads(true);
     const uploadTask = uploadBytesResumable(storageRef, file, {
       customMetadata: { userId: user.uid },
     });
@@ -284,6 +290,8 @@ const FilesProvider: React.FC = () => {
         handleUploadFiles,
         getCurrentFolderFiles,
         removeFileOnError,
+        showUploads,
+        toggleShowUploads,
       }}
     >
       <Outlet />

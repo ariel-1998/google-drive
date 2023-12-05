@@ -1,39 +1,36 @@
-import React, { useState, DragEvent, useRef } from "react";
+import React, { useState, useEffect, useRef, MouseEvent } from "react";
 import { FileState, useFiles } from "../../../context/FilesProvider";
 import styles from "./style.module.css";
 import { AiOutlineClose } from "react-icons/ai";
-import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
+import { FaCirclePause, FaCirclePlay, FaX } from "react-icons/fa6";
 
 const FilesUploadProgress: React.FC = () => {
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const { filesState } = useFiles();
+  const { filesState, showUploads, toggleShowUploads } = useFiles();
   const [show, setShow] = useState(false);
-  const onMouseDown = () => {};
-  const onMouseUp = () => {};
-  const onMouseMove = () => {};
 
   return (
-    <div
-      ref={listRef}
-      className={`${styles.shirnkWindow} ${show && styles.open}`}
-    >
-      <div className={styles.dragAndShowDiv}>
-        <span
-          className={styles.openListBtn}
-          onClick={() => setShow((pre) => !pre)}
-        >
-          {!show ? "Show" : "Hide"} Upload
-        </span>
-        <span className={styles.dragBtn}>Drag</span>
+    showUploads && (
+      <div className={`${styles.shirnkWindow} ${show && styles.open}`}>
+        <div className={styles.dragAndShowDiv}>
+          <span
+            className={styles.openListBtn}
+            onClick={() => setShow((pre) => !pre)}
+          >
+            {!show ? "Show" : "Hide"} Upload
+          </span>
+          <span className={styles.dragBtn} onClick={toggleShowUploads}>
+            <FaX />
+          </span>
+        </div>
+        <div className={`${styles.transitionDiv} ${show && styles.show}`}>
+          {!!filesState.length
+            ? filesState.map((file) => (
+                <FileUpload file={file} key={file.fileId} />
+              ))
+            : "No Uploads"}
+        </div>
       </div>
-      <div className={`${styles.transitionDiv} ${show && styles.show}`}>
-        {!!filesState.length
-          ? filesState.map((file) => (
-              <FileUpload file={file} key={file.fileId} />
-            ))
-          : "No Uploads"}
-      </div>
-    </div>
+    )
   );
 };
 

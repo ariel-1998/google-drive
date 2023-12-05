@@ -1,0 +1,18 @@
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #5291f7;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  padding-inline: 15px;
+  z-index: 1;
+  box-shadow: 0 0 5px black;
+}
+
+.title {
+  font-size: min(14vw, 3rem);
+  text-decoration: none;
+  color: white;
+}

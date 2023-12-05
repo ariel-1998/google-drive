@@ -7,26 +7,24 @@
   gap: 15px;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: color 200ms ease-in-out, background-color 200ms ease-in-out,
-    scale 200ms ease-in-out;
+  transition: color 150ms ease-in-out, background-color 150ms ease-in-out,
+    scale 150ms ease-in-out;
   line-height: 1rem;
   white-space: nowrap;
   color: var(--folder-color);
-  box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .folder:hover {
   color: var(--file-color);
   background-color: var(--folder-color);
-  box-shadow: 6px 2px 2px rgba(0, 0, 0, 0.3);
-  scale: 1.1;
+  box-shadow: 0 1px 3px 2px rgba(0, 0, 0, 0.3);
 }
 
 .folderName {
   overflow: hidden;
   text-overflow: ellipsis;
   color: #333;
-  transition: color 200ms ease-in-out;
+  transition: color 150ms ease-in-out;
 }
 
 .icon {

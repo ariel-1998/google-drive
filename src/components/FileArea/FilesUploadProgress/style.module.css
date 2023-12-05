@@ -1,5 +1,5 @@
 .shirnkWindow {
-  width: 12ch;
+  width: 15ch;
   position: fixed;
   top: 50vh;
   right: 20px;
@@ -7,7 +7,7 @@
   background-color: #ddd9;
   border-radius: 5px;
   padding: 5px;
-  z-index: 1;
+  /* z-index: 1; */
   overflow: hidden;
   transition: all 900ms ease-in-out;
 }
@@ -19,6 +19,8 @@
 .dragAndShowDiv {
   display: flex;
   gap: 5px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .openListBtn {
@@ -28,6 +30,8 @@
 
 .dragBtn {
   color: rgb(82, 79, 79);
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 
 .transitionDiv {

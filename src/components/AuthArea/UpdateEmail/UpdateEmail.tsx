@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useRef } from "react";
 import styles from "./style.module.css";
 import Input from "../../Custom/Input/Input";
 import Button from "../../Custom/Button/Button";
@@ -9,19 +9,19 @@ import { RootState } from "../../../utils/redux/store";
 import { useSelector } from "react-redux";
 import useFirestoreError from "../../../hooks/useFirestoreError";
 import { toastService } from "../../../services/toastService";
-import { auth } from "../../../utils/firebaseConfig";
+import useResetActionState from "../../../hooks/useResetActionState";
 
 const UpdateEmail: React.FC = () => {
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
-  const { status, error } = useSelector(
+  const { error, isLoading, isSuccessful } = useSelector(
     (state: RootState) => state.user.actions.emailUpdate
   );
   useFirestoreError(error);
-
-  const fulfilled = status === "fulfilled";
-  const loading = status === "pending";
-
+  useResetActionState({
+    action: "user",
+    actionType: "emailUpdate",
+  });
   const submitUpdateEmail = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!emailRef.current || !passwordRef.current) return;
@@ -39,7 +39,7 @@ const UpdateEmail: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={submitUpdateEmail}>
       <h2 className={styles.heading}>Update Email</h2>
-      {fulfilled && (
+      {isSuccessful && (
         <>
           <div className={styles.successHeading}>Check Mail Box</div>
           <div className={styles.footer}>
@@ -56,8 +56,8 @@ const UpdateEmail: React.FC = () => {
         <Input type="password" placeholder="Password..." ref={passwordRef} />
       </div>
       <div className={styles.footerWrapper}>
-        <Button theme="secondary" type="submit" disabled={loading}>
-          {loading ? <Spinner /> : "Update Email"}
+        <Button theme="authPrimary" type="submit" disabled={isLoading}>
+          {isLoading ? <Spinner /> : "Update Email"}
         </Button>
       </div>
     </form>

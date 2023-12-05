@@ -15,13 +15,10 @@ type FolderChildrenProps = {
 const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const { currentFolder } = useSelector((state: RootState) => state.folders);
-  const { status, error } = useSelector(
+  const { isLoading, isSuccessful, error } = useSelector(
     (state: RootState) => state.folders.actions.getFolderChildren
   );
   useFirestoreError(error);
-
-  const fulfilled = status === "fulfilled";
-  const loading = status === "pending";
 
   useEffect(() => {
     if (folderId === user?.uid) {
@@ -37,12 +34,12 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
 
   return (
     <div className={styles.foldersContainer}>
-      {loading && (
+      {isLoading && (
         <span className={styles.spinnerWrapper}>
           <Spinner />
         </span>
       )}
-      {fulfilled &&
+      {isSuccessful &&
         currentFolder?.children.map((child) => (
           <Folder key={child.id} folder={child} />
         ))}

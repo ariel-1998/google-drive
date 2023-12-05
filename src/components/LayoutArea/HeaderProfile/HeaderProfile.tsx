@@ -2,15 +2,16 @@ import React, { ReactNode, useRef, useState, useEffect } from "react";
 import styles from "./style.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
-import { FaAngleDown } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import Logout from "../../AuthArea/Logout/Logout";
+import { FaAngleDown, FaSignOutAlt } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { useFiles } from "../../../context/FilesProvider";
 
 const HeaderProfile: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const [menuOpen, setMenuOpen] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
@@ -52,7 +53,6 @@ const HeaderProfile: React.FC = () => {
       >
         <ListItem className={styles.listHeader}>Settings</ListItem>
         <hr className={styles.divider} id="divider" />
-
         <Link to="/update/email" onClick={closeMenu}>
           <ListItem>Update Email</ListItem>
         </Link>
@@ -62,6 +62,8 @@ const HeaderProfile: React.FC = () => {
         <Link to="/update/profile" onClick={closeMenu}>
           <ListItem>Update Profile</ListItem>
         </Link>
+        <ToggleShowUploads closeMenu={closeMenu} />
+
         <Link
           className={styles.deleteAccount}
           to="/delete-account"
@@ -69,10 +71,11 @@ const HeaderProfile: React.FC = () => {
         >
           <ListItem>Delete Account</ListItem>
         </Link>
-
-        <ListItem className={styles.logout}>
-          <Logout className={styles.logoutBtn} callback={closeMenu} />
-        </ListItem>
+        <Link to="/logout" onClick={closeMenu}>
+          <ListItem className={`${styles.logout} ${styles.logoutBtn}`}>
+            Logout <FaSignOutAlt />
+          </ListItem>
+        </Link>
       </div>
     </div>
   );
@@ -83,18 +86,36 @@ export default HeaderProfile;
 type ListItemProps = {
   children?: ReactNode;
   className?: string;
-};
+} & React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
 
-function ListItem({ children, className }: ListItemProps) {
-  return <div className={`${styles.listItem} ${className}`}>{children}</div>;
+function ListItem({ children, className, ...rest }: ListItemProps) {
+  return (
+    <div className={`${styles.listItem} ${className}`} {...rest}>
+      {children}
+    </div>
+  );
 }
 
-// function DeleteAccountBtn() {
-//   const navigate = useNavigate();
+type ToggleShowUploadsProps = {
+  closeMenu(): void;
+};
+function ToggleShowUploads({ closeMenu }: ToggleShowUploadsProps) {
+  const { showUploads, toggleShowUploads } = useFiles();
+  const onToggle = () => {
+    toggleShowUploads();
+    closeMenu();
+  };
+  const { pathname } = useLocation();
+  const showUploadsItem = pathname === "/" || pathname.startsWith("/folder");
 
-//   const navigateToDeleteAcc = () => {
-//     navigate("/delete-account");
-//   };
-
-//   return <button onClick={navigateToDeleteAcc}>Delete</button>;
-// }
+  return (
+    showUploadsItem && (
+      <ListItem onClick={onToggle}>
+        {showUploads ? "Hide" : "Show"} Uploads
+      </ListItem>
+    )
+  );
+}

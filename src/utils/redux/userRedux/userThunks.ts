@@ -14,14 +14,9 @@ import {
   updateProfile,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
-import { auth, db } from "../../firebaseConfig";
-import { runTransaction } from "firebase/firestore";
+import { auth } from "../../firebaseConfig";
 
 class UserThunks {
-  private onUserDelete() {
-    // await runTransaction(db,)
-  }
-
   registerAsync = createAsyncThunk(
     "user/registerAsync",
     async (credentials: UserCredentials) => {

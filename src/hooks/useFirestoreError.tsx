@@ -1,15 +1,12 @@
 import { SerializedError } from "@reduxjs/toolkit";
 import React, { useEffect } from "react";
 import { toastService } from "../services/toastService";
-import { userService } from "../services/userService";
-import { resetAuthStateOnLogout } from "../utils/redux/userRedux/userSlice";
-import { resetFolderStateOnLogout } from "../utils/redux/foldersRedux/foldersSlice";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 type UseFirestoreErrorProps = SerializedError | null;
 
 const useFirestoreError: React.FC<UseFirestoreErrorProps> = (error) => {
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!error || !error.message) return;
@@ -19,12 +16,9 @@ const useFirestoreError: React.FC<UseFirestoreErrorProps> = (error) => {
       message,
     });
     toastService.error(errorMsg);
-    if (shouldReLogin) {
-      userService.logout();
-      dispatch(resetAuthStateOnLogout());
-      dispatch(resetFolderStateOnLogout());
-    }
+    if (shouldReLogin) navigate("/logout");
   }, [error]);
+
   return null;
 };
 

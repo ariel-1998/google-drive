@@ -2,7 +2,7 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styles from "./style.module.css";
 import Button from "../../Custom/Button/Button";
 import Spinner from "../../Custom/Spinner/Spinner";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import { foldersService } from "../../../services/foldersService";
 import {
@@ -13,6 +13,8 @@ import {
 import Input from "../../Custom/Input/Input";
 import useFirestoreError from "../../../hooks/useFirestoreError";
 import { toastService } from "../../../services/toastService";
+import useResetActionState from "../../../hooks/useResetActionState";
+import { resetFolderActionState } from "../../../utils/redux/foldersRedux/foldersSlice";
 
 type AddFolderFormProps = {
   closeModal(): void;
@@ -21,14 +23,12 @@ type AddFolderFormProps = {
 const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
   const { currentFolder } = useSelector((state: RootState) => state.folders);
   const { user } = useSelector((state: RootState) => state.user);
-  const { error, status } = useSelector(
+  const { error, isLoading, isSuccessful } = useSelector(
     (state: RootState) => state.folders.actions.addFolder
   );
+  const dispatch = useDispatch();
   useFirestoreError(error);
   const folderNameRef = useRef<HTMLInputElement | null>(null);
-
-  const fulfilled = status === "fulfilled";
-  const loading = status === "pending";
 
   const submitCreateFolder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,10 +61,12 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
     };
     return newFolder;
   }
-
   useEffect(() => {
-    if (fulfilled) closeModal();
-  }, [fulfilled]);
+    if (!isSuccessful) return;
+    console.log("what");
+    closeModal();
+    dispatch(resetFolderActionState("addFolder"));
+  }, [isSuccessful]);
 
   useEffect(() => {
     if (!folderNameRef.current) return;
@@ -87,8 +89,8 @@ const AddFolderForm: React.FC<AddFolderFormProps> = ({ closeModal }) => {
     <form className={styles.form} onSubmit={submitCreateFolder}>
       <h2 className={styles.heading}>Create Folder</h2>
       <Input type="text" placeholder="Folder Name..." ref={folderNameRef} />
-      <Button theme="primary" type="submit" disabled={loading}>
-        {loading ? <Spinner /> : "Create"}
+      <Button theme="primary" type="submit" disabled={isLoading}>
+        {isLoading ? <Spinner /> : "Create"}
       </Button>
     </form>
   );

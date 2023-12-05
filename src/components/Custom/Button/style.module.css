@@ -16,12 +16,18 @@
 }
 
 .primary:hover,
-.secondary:hover {
+.secondary:hover,
+.authPrimary:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .secondary {
-  background-color: var(--file-color);
+  background-color: var(--folder-color);
+  color: #ffffff;
+}
+
+.authPrimary {
+  background-color: #559caa;
   color: #ffffff;
 }
 

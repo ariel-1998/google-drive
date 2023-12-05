@@ -13,12 +13,13 @@
 .link {
   text-decoration: none;
   color: black;
+  width: fit-content;
 }
 
 .fileContainer:hover {
   box-shadow: 0 0 5px black;
   background-color: var(--file-color);
-  scale: 1.1;
+  scale: 1.05;
   .icon {
     color: white;
   }

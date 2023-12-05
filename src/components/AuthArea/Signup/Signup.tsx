@@ -14,18 +14,22 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import Spinner from "../../Custom/Spinner/Spinner";
 import useFirestoreError from "../../../hooks/useFirestoreError";
+import useResetActionState from "../../../hooks/useResetActionState";
 
 //need to validate that there is such email before sgining up
 /////////
 /////////////
 ////////////
 const Signup: React.FC = () => {
-  const { error, status } = useSelector(
+  const { error, isLoading } = useSelector(
     (state: RootState) => state.user.actions.register
   );
   useFirestoreError(error);
+  useResetActionState({
+    action: "user",
+    actionType: "register",
+  });
 
-  const loading = status === "pending";
   const {
     register,
     handleSubmit,
@@ -71,8 +75,8 @@ const Signup: React.FC = () => {
           </div>
         )}
       </div>
-      <Button theme="primary" type="submit" disabled={loading}>
-        {loading ? <Spinner /> : "Sign Up"}
+      <Button theme="primary" type="submit" disabled={isLoading}>
+        {isLoading ? <Spinner /> : "Sign Up"}
       </Button>
       <div className={styles.footer}>
         <span>Already have an account yet?</span>
