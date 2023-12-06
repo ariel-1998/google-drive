@@ -6,18 +6,23 @@ import {
   StorageReference,
   UploadTask,
   UploadTaskSnapshot,
+  deleteObject,
   getDownloadURL,
+  getMetadata,
   ref,
+  updateMetadata,
   uploadBytesResumable,
 } from "firebase/storage";
 import { dbCollectionRefs, storage } from "../utils/firebaseConfig";
 import { v4 as uuidV4 } from "uuid";
 import {
   addDoc,
+  deleteDoc,
   getDocs,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { FileModel } from "../models/FileModel";
@@ -36,8 +41,11 @@ type FilesContextProps = {
   handleUploadFiles: (file: File) => void;
   getCurrentFolderFiles(): Promise<void>;
   removeFileOnError(fileId: string): void;
+  fileDisplayed: FileDisplayed;
+  setDisplayedFile: (file: FileDisplayed) => void;
+  renameFile: (fileId: string, newName: string) => Promise<void>;
+  deleteFile: (file: FileModel) => Promise<void>;
 };
-
 const FilesContext = createContext<FilesContextProps | null>(null);
 
 export const useFiles = () => {
@@ -56,7 +64,12 @@ export type FileState = {
   uploadTask?: UploadTask;
 };
 
+export type FileDisplasOptions = "delete" | "rename" | "details";
 type FilesCache = Record<string, FileModel[]>;
+type FileDisplayed = {
+  file: FileModel;
+  option: FileDisplasOptions;
+} | null;
 
 const FilesProvider: React.FC = () => {
   const { path, currentFolder } = useSelector(
@@ -73,6 +86,18 @@ const FilesProvider: React.FC = () => {
   );
   useFirestoreError(firestoreError);
   const [showUploads, setShowUploads] = useState(true);
+  const [fileDisplayed, setFileDisplayed] = useState<FileDisplayed>(null);
+
+  //reset data on logout/leaving browser
+  useEffect(() => {
+    return () => {
+      setFilesState([]);
+      setFiles({});
+    };
+  }, []);
+
+  const setDisplayedFile = (file: FileDisplayed) => setFileDisplayed(file);
+
   const toggleShowUploads = () => {
     setShowUploads((prev) => !prev);
   };
@@ -273,13 +298,59 @@ const FilesProvider: React.FC = () => {
       prevState.filter((file) => file.fileId !== fileId)
     );
   }
-  //reset data on logout/leaving browser
-  useEffect(() => {
-    return () => {
-      setFilesState([]);
-      setFiles({});
-    };
-  }, []);
+
+  const renameFile = async (fileId: string, newName: string) => {
+    if (!currentFolder) return;
+    let preveName = "";
+    try {
+      const fileRef = dbCollectionRefs.fileDocRef(fileId);
+      const rename: Partial<FileModel> = { name: newName };
+      setFiles((prevFiles) => {
+        return {
+          ...prevFiles,
+          [currentFolder.id]: prevFiles[currentFolder.id].map((file) => {
+            if (file.id !== fileId) return file;
+            preveName = file.name;
+            return { ...file, name: newName };
+          }),
+        };
+      });
+      await updateDoc(fileRef, rename);
+    } catch (error) {
+      setFiles((prevFiles) => {
+        return {
+          ...prevFiles,
+          [currentFolder.id]: prevFiles[currentFolder.id].map((file) => {
+            if (file.id !== fileId) return file;
+            return { ...file, name: preveName };
+          }),
+        };
+      });
+      throw error;
+    }
+  };
+
+  const deleteFile = async (file: FileModel) => {
+    if (!currentFolder) return;
+    const fileRef = ref(storage, file.url);
+    const fileDoc = dbCollectionRefs.fileDocRef(file.id!);
+    try {
+      setFiles((prevFiles) => {
+        return {
+          ...prevFiles,
+          [currentFolder.id]: prevFiles[currentFolder.id].filter(
+            (currentFile) => currentFile.id !== file.id
+          ),
+        };
+      });
+      await deleteObject(fileRef);
+      await deleteDoc(fileDoc);
+    } catch (error) {
+      // set file to what they were before the filtering
+      setFiles(files);
+      throw error;
+    }
+  };
 
   return (
     <FilesContext.Provider
@@ -292,6 +363,10 @@ const FilesProvider: React.FC = () => {
         removeFileOnError,
         showUploads,
         toggleShowUploads,
+        fileDisplayed,
+        setDisplayedFile,
+        renameFile,
+        deleteFile,
       }}
     >
       <Outlet />

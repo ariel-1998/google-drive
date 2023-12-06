@@ -21,4 +21,5 @@ export const dbCollectionRefs = {
   folders: collection(db, "folders"),
   files: collection(db, "files"),
   folersDocRef: (docId: string) => doc(db, "folders", docId),
+  fileDocRef: (fileId: string) => doc(db, "files", fileId),
 };

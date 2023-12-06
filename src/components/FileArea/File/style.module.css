@@ -8,12 +8,14 @@
   width: 85px;
   text-align: center;
   transition: all 200ms ease-in-out;
+  height: 100%;
 }
 
 .link {
   text-decoration: none;
   color: black;
   width: fit-content;
+  position: relative;
 }
 
 .fileContainer:hover {

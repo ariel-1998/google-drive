@@ -1,4 +1,4 @@
-import { FieldValue } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type FileModel = {
   id?: string;
@@ -6,5 +6,5 @@ export type FileModel = {
   parentId: string;
   userId?: string;
   url: string;
-  uploadedAt: FieldValue | Date;
+  uploadedAt: FieldValue | Timestamp | Date;
 };
