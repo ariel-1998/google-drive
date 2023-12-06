@@ -3,6 +3,7 @@ import {
   createFolderAsync,
   getFolderAsync,
   getFolderChildrenAsync,
+  renameFolderAsync,
   setCurrentFolder,
 } from "../utils/redux/foldersRedux/foldersSlice";
 import { store } from "../utils/redux/store";
@@ -23,6 +24,10 @@ class FoldersService {
     const cachedFolder = folders[folderId];
     if (cachedFolder) return store.dispatch(setCurrentFolder(cachedFolder));
     store.dispatch(getFolderAsync(folderId));
+  }
+
+  renameFolder(folder: FolderModel, newName: string) {
+    store.dispatch(renameFolderAsync({ folder, newName }));
   }
 }
 

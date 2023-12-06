@@ -1,7 +1,7 @@
 import React from "react";
 import { formatDate } from "../../../../utils/dateFormatter";
 import { Timestamp } from "firebase/firestore";
-import FileModal from "../FileModal/FileModal";
+import Modal from "../../../Custom/Modal/Modal";
 import styles from "./style.module.css";
 import { FileModel } from "../../../../models/FileModel";
 
@@ -17,7 +17,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   const uploadedAt = formatDate(file.uploadedAt as Timestamp | Date);
 
   return (
-    <FileModal closeModal={closeModal} className={styles.modal}>
+    <Modal closeModal={closeModal} className={styles.modal}>
       <h3 className={styles.title}>Details</h3>
       <div className={styles.details}>
         <span className={styles.detailTitle}>File Name: </span>
@@ -25,7 +25,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
         <span className={styles.detailTitle}>Uploaded At:</span>
         <span> {uploadedAt}</span>
       </div>
-    </FileModal>
+    </Modal>
   );
 };
 

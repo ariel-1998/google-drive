@@ -1,17 +1,13 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import styles from "./style.module.css";
 import ReactDOM from "react-dom";
-type FileModalProps = {
+type ModalProps = {
   closeModal: () => void;
   children: ReactNode;
   className?: string;
 };
 
-const FileModal: React.FC<FileModalProps> = ({
-  children,
-  closeModal,
-  className,
-}) => {
+const Modal: React.FC<ModalProps> = ({ children, closeModal, className }) => {
   return ReactDOM.createPortal(
     <div className={styles.modal} onClick={closeModal}>
       <div
@@ -25,4 +21,4 @@ const FileModal: React.FC<FileModalProps> = ({
   );
 };
 
-export default FileModal;
+export default Modal;

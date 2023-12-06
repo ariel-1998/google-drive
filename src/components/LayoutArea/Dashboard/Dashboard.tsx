@@ -11,8 +11,8 @@ import { ROOT_FOLDER } from "../../../utils/redux/foldersRedux/foldersSlice";
 import { useFiles } from "../../../context/FilesProvider";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
-import FileDetailsModal from "../../FileArea/ModalArea/FileDetailsModal/FileDetailsModal";
 import ModalToShow from "../../FileArea/ModalArea/ModalToShow/ModalToShow";
+import FolderModalToShow from "../../FolderArea/ModalArea/FolderModalToShow/FolderModalToShow";
 
 const Dashboard: React.FC = () => {
   const { folderId: id } = useParams();
@@ -31,7 +31,10 @@ const Dashboard: React.FC = () => {
         <FolderAndFileSlider folderId={folderId} />
       </div>
       <FilesUploadProgress />
-      <ModalToShow />
+      <>
+        <ModalToShow />
+        <FolderModalToShow />
+      </>
     </div>
   );
 };

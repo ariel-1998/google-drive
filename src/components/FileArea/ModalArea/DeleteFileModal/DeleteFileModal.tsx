@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FileModel } from "../../../../models/FileModel";
-import FileModal from "../FileModal/FileModal";
+import Modal from "../../../Custom/Modal/Modal";
 import styles from "./style.module.css";
 import Button from "../../../Custom/Button/Button";
 import { useFiles } from "../../../../context/FilesProvider";
@@ -31,7 +31,7 @@ const DeleteFileModal: React.FC<DeleteFileModalProps> = ({
   };
 
   return (
-    <FileModal closeModal={closeModal} className={styles.modal}>
+    <Modal closeModal={closeModal} className={styles.modal}>
       <h3 className={styles.title}>Delete File</h3>
       <span className={styles.danger}>
         <span>Note: </span>File will be lost forever!
@@ -47,7 +47,7 @@ const DeleteFileModal: React.FC<DeleteFileModalProps> = ({
           {loading ? <Spinner /> : "Delete"}
         </Button>
       </div>
-    </FileModal>
+    </Modal>
   );
 };
 

@@ -8,6 +8,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { store } from "../store";
@@ -60,6 +61,17 @@ class FoldersThunks {
       const data = querySnapshot.data() as FolderModel;
       const folder = { ...data, id: querySnapshot.id };
       return await this.getFolderChildren(folder);
+    }
+  );
+
+  renameFolderAsync = createAsyncThunk(
+    "files/renameFolderAsync",
+    async ({ folder, newName }: { folder: FolderModel; newName: string }) => {
+      const { id } = folder;
+      const folderRef = dbCollectionRefs.folersDocRef(id);
+      const rename: Partial<FolderModel> = { name: newName };
+      await updateDoc(folderRef, rename);
+      return { ...folder, name: newName };
     }
   );
 

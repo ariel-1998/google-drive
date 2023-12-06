@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./style.module.css";
 import { FaFolder } from "react-icons/fa";
 import { FolderModel, Path } from "../../../models/FolderModel";
@@ -8,6 +8,7 @@ import {
   setCurrentFolder,
   setPath,
 } from "../../../utils/redux/foldersRedux/foldersSlice";
+import FolderContextMenu from "../FolderContextMenu/FolderContextMenu";
 
 type FolderProps = {
   folder: FolderModel;
@@ -28,14 +29,45 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
     navigate(`/folder/${folder.id}`);
   };
 
+  const [contextMenu, setContextMenu] = useState({
+    isVisible: false,
+    position: { top: 0, left: 0 },
+  });
+
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({
+      isVisible: true,
+      position: { top: e.clientY, left: e.clientX },
+    });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu({ isVisible: false, position: { top: 0, left: 0 } });
+  };
+
   return (
-    <div title={folder.name} onClick={setFolder} className={styles.folder}>
-      <i className={styles.icon}>
-        <FaFolder />
-      </i>
-      {/** need to limit string length to and add dots instead */}
-      <span className={styles.folderName}>{folder.name}</span>
-    </div>
+    <>
+      {contextMenu.isVisible && (
+        <FolderContextMenu
+          folder={folder}
+          closeMenu={handleCloseContextMenu}
+          position={contextMenu.position}
+        />
+      )}
+      <div
+        title={folder.name}
+        onClick={setFolder}
+        onContextMenu={handleRightClick}
+        className={styles.folder}
+      >
+        <i className={styles.icon}>
+          <FaFolder />
+        </i>
+        {/** need to limit string length to and add dots instead */}
+        <span className={styles.folderName}>{folder.name}</span>
+      </div>
+    </>
   );
 };
 

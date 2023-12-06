@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./style.module.css";
 import ReactDOM from "react-dom";
 import { FileModel } from "../../../models/FileModel";
-import { FileDisplasOptions, useFiles } from "../../../context/FilesProvider";
+import { FileDisplayOptions, useFiles } from "../../../context/FilesProvider";
 
 type ContextMenuProps = {
   position: { top: number; left: number };
@@ -44,7 +44,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     listRef.current.focus();
   }, []);
 
-  const onOptionClick = (option: FileDisplasOptions) => {
+  const onOptionClick = (option: FileDisplayOptions) => {
     setDisplayedFile({ file, option });
     closeMenu();
   };

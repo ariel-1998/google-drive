@@ -1,6 +1,6 @@
 import React, { FormEvent, useRef, useState } from "react";
 import { useFiles } from "../../../../context/FilesProvider";
-import FileModal from "../FileModal/FileModal";
+import Modal from "../../../Custom/Modal/Modal";
 import styles from "./style.module.css";
 import Input from "../../../Custom/Input/Input";
 import { FileModel } from "../../../../models/FileModel";
@@ -40,7 +40,7 @@ const RenameFileModal: React.FC<RenameFileModalProps> = ({
   }
 
   return (
-    <FileModal closeModal={closeModal}>
+    <Modal closeModal={closeModal}>
       <form onSubmit={submitRename} className={styles.form}>
         <h3 className={styles.title}>Rename File</h3>
         <Input autoFocus defaultValue={file.name} ref={nameRef} />
@@ -48,7 +48,7 @@ const RenameFileModal: React.FC<RenameFileModalProps> = ({
           Rename
         </Button>
       </form>
-    </FileModal>
+    </Modal>
   );
 };
 

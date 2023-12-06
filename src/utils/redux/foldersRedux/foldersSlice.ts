@@ -2,15 +2,36 @@ import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import { foldersThunks } from "./foldersThunks";
 import { FolderModel, Path } from "../../../models/FolderModel";
 import { Status, Action, initialAction } from "../userRedux/userSlice";
+import { FileDisplayOptions } from "../../../context/FilesProvider";
 
 export type FolderActions = Record<FolderMethods, Action>;
+
+type FolderDisplayed = {
+  folder: FolderModel;
+  option: FileDisplayOptions;
+} | null;
 
 type FolderStateType = {
   folders: Record<string, FolderModel>;
   actions: FolderActions;
   currentFolder: FolderModel | null;
+  contextFolder: FolderDisplayed;
   path: Path[];
 };
+
+///////////// TRY TO MAKE THE STATE OBJECT FOLDER CHILDREN AN OBJECT INSTEAD OF AN ARRAY
+// const initialState = {
+//   // ...
+//   folders: {
+//     // other folders...
+//     [folder.id]: {
+//       ...folder,
+//       children: folder.children.reduce((acc, child) => {
+//         acc[child.id] = child;
+//         return acc;
+//       }, {}),
+//     },
+//   },}
 
 export const ROOT_FOLDER: FolderModel = {
   id: "",
@@ -27,8 +48,10 @@ const initialState = {
   actions: {
     addFolder: { ...initialAction },
     getFolderChildren: { ...initialAction },
+    renameFolder: { ...initialAction },
   },
   path: [],
+  contextFolder: null,
 } as FolderStateType;
 
 const foldersSlice = createSlice({
@@ -41,13 +64,18 @@ const foldersSlice = createSlice({
     setPath(state, action: PayloadAction<Path[]>) {
       state.path = action.payload;
     },
-    resetFolderStateOnLogout() {
-      return initialState;
-    },
+
     resetFolderActionState(state, action: PayloadAction<FolderMethods>) {
       const method = action.payload;
       state.actions[method] = { ...initialAction };
       return state;
+    },
+    setContextFolder(state, action: PayloadAction<FolderDisplayed>) {
+      const context = action.payload;
+      state.contextFolder = context;
+    },
+    resetFolderStateOnLogout() {
+      return initialState;
     },
   },
   extraReducers(builder) {
@@ -79,20 +107,52 @@ const foldersSlice = createSlice({
       state.folders[payload.id] = payload;
       state.currentFolder = payload;
     });
+    //getFolderChildren
+    builder.addCase(renameFolderAsync.pending, (state) => {
+      handleStateStatus(state, "pending", "renameFolder");
+    });
+    builder.addCase(renameFolderAsync.rejected, (state, action) => {
+      handleStateStatus(state, "rejected", "renameFolder", action.error);
+    });
+    builder.addCase(renameFolderAsync.fulfilled, (state, action) => {
+      const folder = action.payload;
+      handleStateStatus(state, "fulfilled", "renameFolder");
+      //need to implement binary search
+      if (state.currentFolder) {
+        state.currentFolder.children = state.currentFolder?.children.map(
+          (child) => {
+            if (child.id === folder.id) return folder;
+            return child;
+          }
+        );
+      }
+      state.folders[folder.parentId!].children = state.folders[
+        folder.parentId!
+      ].children.map((child) => {
+        if (child.id === folder.id) return folder;
+        return child;
+      });
+      return state;
+    });
   },
 });
 
-export const { createFolderAsync, getFolderChildrenAsync, getFolderAsync } =
-  foldersThunks;
+export const {
+  createFolderAsync,
+  getFolderChildrenAsync,
+  getFolderAsync,
+  renameFolderAsync,
+} = foldersThunks;
 export const {
   setCurrentFolder,
   resetFolderActionState,
   setPath,
   resetFolderStateOnLogout,
+  setContextFolder,
 } = foldersSlice.actions;
 export default foldersSlice.reducer;
 
-export type FolderMethods = "addFolder" | "getFolderChildren";
+export type FolderMethods = "addFolder" | "getFolderChildren" | "renameFolder";
 
 function handleStateStatus(
   state: FolderStateType,

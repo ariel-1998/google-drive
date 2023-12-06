@@ -64,11 +64,11 @@ export type FileState = {
   uploadTask?: UploadTask;
 };
 
-export type FileDisplasOptions = "delete" | "rename" | "details";
+export type FileDisplayOptions = "delete" | "rename" | "details";
 type FilesCache = Record<string, FileModel[]>;
 type FileDisplayed = {
   file: FileModel;
-  option: FileDisplasOptions;
+  option: FileDisplayOptions;
 } | null;
 
 const FilesProvider: React.FC = () => {

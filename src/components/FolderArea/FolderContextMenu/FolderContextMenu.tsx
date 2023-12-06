@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./style.module.css";
 import ReactDOM from "react-dom";
-import { FileDisplasOptions } from "../../../context/FilesProvider";
+import { FileDisplayOptions } from "../../../context/FilesProvider";
 import { FolderModel } from "../../../models/FolderModel";
+import { useDispatch } from "react-redux";
+import { setContextFolder } from "../../../utils/redux/foldersRedux/foldersSlice";
 
 type FolderContextMenuProps = {
   position: { top: number; left: number };
@@ -17,7 +19,7 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
 }) => {
   const [adjustPosition, setAdjustPosition] =
     useState<typeof position>(position);
-
+  const dispatch = useDispatch();
   const listRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
@@ -44,7 +46,8 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
     listRef.current.focus();
   }, []);
 
-  const onOptionClick = (option: FileDisplasOptions) => {
+  const onOptionClick = (option: FileDisplayOptions) => {
+    dispatch(setContextFolder({ folder, option }));
     closeMenu();
   };
 
