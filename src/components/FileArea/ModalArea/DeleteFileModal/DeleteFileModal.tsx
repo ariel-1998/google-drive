@@ -5,6 +5,8 @@ import styles from "./style.module.css";
 import Button from "../../../Custom/Button/Button";
 import { useFiles } from "../../../../context/FilesProvider";
 import Spinner from "../../../Custom/Spinner/Spinner";
+import useFirestoreError from "../../../../hooks/useFirestoreError";
+import { SerializedError } from "@reduxjs/toolkit";
 type DeleteFileModalProps = {
   file: FileModel;
   closeModal(): void;
@@ -15,8 +17,10 @@ const DeleteFileModal: React.FC<DeleteFileModalProps> = ({
   file,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any>();
+  const [error, setError] = useState<SerializedError | null>(null);
   const { deleteFile } = useFiles();
+  useFirestoreError(error);
+
   const triggerDeleteFile = async () => {
     try {
       setError(null);
@@ -24,7 +28,7 @@ const DeleteFileModal: React.FC<DeleteFileModalProps> = ({
       await deleteFile(file);
       closeModal();
     } catch (error) {
-      setError(error);
+      setError(error as SerializedError);
     } finally {
       setLoading(false);
     }

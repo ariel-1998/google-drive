@@ -3,12 +3,13 @@ import styles from "./style.module.css";
 import { FaFolder } from "react-icons/fa";
 import { FolderModel, Path } from "../../../models/FolderModel";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentFolder,
   setPath,
 } from "../../../utils/redux/foldersRedux/foldersSlice";
 import FolderContextMenu from "../FolderContextMenu/FolderContextMenu";
+import { RootState } from "../../../utils/redux/store";
 
 type FolderProps = {
   folder: FolderModel;
@@ -17,13 +18,17 @@ type FolderProps = {
 const Folder: React.FC<FolderProps> = ({ folder }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  {
+    /*
+  the reason i take path from cahe is if i update folder name it wont be updated for the children,
+  it will be expensive to cycle through them, so instead i teke the path and the current folder name 
+  and update the path accordingly
+*/
+  }
+  const { path } = useSelector((state: RootState) => state.folders);
   const setFolder = () => {
     //passing new path state to new route to update path in redux automaticly with no delay
-    const newPath: Path[] = [
-      ...folder.path,
-      { name: folder.name, id: folder.id },
-    ];
+    const newPath: Path[] = [...path, { name: folder.name, id: folder.id }];
     dispatch(setPath(newPath));
     dispatch(setCurrentFolder(folder));
     navigate(`/folder/${folder.id}`);

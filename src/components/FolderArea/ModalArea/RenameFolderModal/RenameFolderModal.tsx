@@ -9,6 +9,7 @@ import Spinner from "../../../Custom/Spinner/Spinner";
 import Input from "../../../Custom/Input/Input";
 import Button from "../../../Custom/Button/Button";
 import useResetActionState from "../../../../hooks/useResetActionState";
+import useFirestoreError from "../../../../hooks/useFirestoreError";
 
 type RenameFolderModalProps = {
   folder: FolderModel;
@@ -20,13 +21,14 @@ const RenameFolderModal: React.FC<RenameFolderModalProps> = ({
   folder,
 }) => {
   const nameRef = useRef<HTMLInputElement | null>(null);
-
-  const { error, isLoading, isSuccessful, isError } = useSelector(
+  const { error, isLoading, isSuccessful } = useSelector(
     (state: RootState) => state.folders.actions.renameFolder
   );
 
+  useFirestoreError(error);
   useResetActionState({ action: "folder", actionType: "renameFolder" });
-  const submitRename = (e: FormEvent) => {
+
+  const submitRename = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const input = nameRef.current;
     if (!input) return;
@@ -36,7 +38,6 @@ const RenameFolderModal: React.FC<RenameFolderModalProps> = ({
   useEffect(() => {
     if (!isSuccessful) return;
     closeModal();
-    return () => {};
   }, [isSuccessful]);
 
   return (

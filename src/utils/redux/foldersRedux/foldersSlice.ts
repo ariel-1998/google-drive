@@ -107,7 +107,7 @@ const foldersSlice = createSlice({
       state.folders[payload.id] = payload;
       state.currentFolder = payload;
     });
-    //getFolderChildren
+    //eenameFolder
     builder.addCase(renameFolderAsync.pending, (state) => {
       handleStateStatus(state, "pending", "renameFolder");
     });

@@ -343,7 +343,11 @@ const FilesProvider: React.FC = () => {
           ),
         };
       });
-      await deleteObject(fileRef);
+      try {
+        await deleteObject(fileRef);
+      } catch (error) {
+        return storageErrorHandler(error as StorageError);
+      }
       await deleteDoc(fileDoc);
     } catch (error) {
       // set file to what they were before the filtering
