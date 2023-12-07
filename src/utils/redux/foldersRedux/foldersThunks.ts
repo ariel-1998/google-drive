@@ -6,10 +6,9 @@ import {
 } from "../../../models/FolderModel";
 import { auth, db, dbCollectionRefs } from "../../firebaseConfig";
 import {
-  DocumentData,
   QuerySnapshot,
-  WriteBatch,
   addDoc,
+  deleteDoc,
   getDoc,
   getDocs,
   orderBy,
@@ -19,18 +18,47 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { store } from "../store";
 
 class FoldersThunks {
-  private async queryFoldersBasedOnPath(path: Path, userId: string) {
+  private async queryFoldersBasedOnPath(
+    collection: typeof dbCollectionRefs.folders,
+    path: Path | { id: string },
+    userId: string
+  ) {
     const q = query(
-      dbCollectionRefs.folders,
+      collection,
       where("path", "array-contains", path),
       where("userId", "==", userId)
     );
 
     const querySnapshot = await getDocs(q);
     return querySnapshot;
+  }
+
+  private async deleteDocsBasedOnPath(querySnapshot: QuerySnapshot) {
+    //delete all folder Children
+    const docsDeletedArr: FolderModel[] = [];
+    if (!querySnapshot.empty) {
+      let batch = writeBatch(db);
+      let docCounter = 0;
+
+      for (const doc of querySnapshot.docs) {
+        //store all the folders that ar deleted in an object to delete thei file children
+        batch.delete(doc.ref);
+        docCounter++;
+        docsDeletedArr.push({ ...doc.data(), id: doc.id } as FolderModel);
+        if (docCounter === 499) {
+          docCounter = 0;
+          await batch.commit();
+          batch = writeBatch(db);
+        }
+      }
+      //check if last round was less than 500 then commit batch
+      if (docCounter > 0) {
+        await batch.commit();
+      }
+    }
+    return docsDeletedArr;
   }
 
   private async getFolderChildren(folder: FolderModel) {
@@ -101,6 +129,7 @@ class FoldersThunks {
       const pathToSearch: Path = { id, name };
 
       const querySnapshot = await this.queryFoldersBasedOnPath(
+        dbCollectionRefs.folders,
         pathToSearch,
         user.uid
       );
@@ -132,53 +161,42 @@ class FoldersThunks {
           await batch.commit();
         }
       }
-
       return { ...folder, name: newName };
     }
   );
 
-  // deleteFolderAsync = createAsyncThunk(
-  //   "files/deleteFolderAsync",
-  //   async (folder: FolderModel) => {
-  //     //delete everything from folders where folder.path includes folder.id and userId == user.uid
-  //     const user = auth.currentUser;
-  //     if (!user) throw new Error("User not logged in!");
-  //     // const path: Path = {id: folder.id}
-  //     const { id, name } = folder;
-  //     const pathToSearch: Path = { id, name };
+  deleteFolderAsync = createAsyncThunk(
+    "files/deleteFolderAsync",
+    async (folder: FolderModel) => {
+      //delete everything from folders where folder.path includes folder.id and userId == user.uid
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not logged in!");
+      // const path: Path = {id: folder.id}
+      const { id, name } = folder;
+      const folderPathToSearch: Path = { id, name };
 
-  //     const querySnapshot = await this.queryFoldersBasedOnPath(
-  //       pathToSearch,
-  //       user.uid
-  //     );
-  //     const foldersDeleted: Record<string, string> = {};
-  //     //delete all folder Children
-  //     if (!querySnapshot.empty) {
-  //       let batch = writeBatch(db);
-  //       let docCounter = 0;
+      const queryFoldersSnapshot = await this.queryFoldersBasedOnPath(
+        dbCollectionRefs.folders,
+        folderPathToSearch,
+        user.uid
+      );
+      await deleteDoc(dbCollectionRefs.folersDocRef(id));
+      const deletedFolders = await this.deleteDocsBasedOnPath(
+        queryFoldersSnapshot
+      );
 
-  //       for (const doc of querySnapshot.docs) {
-  //         //store all the folders that ar deleted in an object to delete thei file children
-  //         if (!foldersDeleted[doc.id]) foldersDeleted[doc.id] = doc.id;
-  //         batch.delete(doc.ref);
+      //and delete all from files based on path
+      const queryFilesSnapshot = await this.queryFoldersBasedOnPath(
+        dbCollectionRefs.files,
+        { id },
+        user.uid
+      );
 
-  //         docCounter++;
-
-  //         if (docCounter === 499) {
-  //           docCounter = 0;
-  //           await batch.commit();
-  //           batch = writeBatch(db);
-  //         }
-  //       }
-  //       //check if last round was less than 500 then commit batch
-  //       if (docCounter > 0) {
-  //         await batch.commit();
-  //       }
-  //     }
-
-  //     //adn delete all from files (should also) store path in files and do the same as folders
-  //   }
-  // );
+      await this.deleteDocsBasedOnPath(queryFilesSnapshot);
+      deletedFolders.push(folder);
+      return { deletedFolders, contextFolder: folder };
+    }
+  );
 }
 
 export const foldersThunks = new FoldersThunks();

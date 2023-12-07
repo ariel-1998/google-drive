@@ -22,7 +22,7 @@ const FolderChildren: React.FC<FolderChildrenProps> = ({ folderId }) => {
 
   useEffect(() => {
     if (folderId === user?.uid) {
-      foldersService.getFolderChildren(ROOT_FOLDER);
+      foldersService.getFolderChildren({ ...ROOT_FOLDER });
       return;
     }
     if (currentFolder && folderId === currentFolder.id) {

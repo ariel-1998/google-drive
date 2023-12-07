@@ -5,6 +5,7 @@ import { setContextFolder } from "../../../../utils/redux/foldersRedux/foldersSl
 import DeleteFolderModal from "../DeleteFolderModal/DeleteFolderModal";
 import RenameFolderModal from "../RenameFolderModal/RenameFolderModal";
 import FolderDetailsModal from "../FolderDetailsModal/FolderDetailsModal";
+
 const FolderModalToShow: React.FC = () => {
   const { contextFolder } = useSelector((state: RootState) => state.folders);
   const dispatch = useDispatch();

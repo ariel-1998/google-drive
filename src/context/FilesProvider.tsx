@@ -205,6 +205,9 @@ const FilesProvider: React.FC = () => {
       const donloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
       const fileObj: FileModel = {
         name: file.name,
+        path: path.map((p) => {
+          return { id: p.id };
+        }),
         parentId: path[path.length - 1].id,
         userId: user?.uid,
         url: donloadUrl,

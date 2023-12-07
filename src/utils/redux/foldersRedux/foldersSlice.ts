@@ -49,6 +49,7 @@ const initialState = {
     addFolder: { ...initialAction },
     getFolderChildren: { ...initialAction },
     renameFolder: { ...initialAction },
+    deleteFolder: { ...initialAction },
   },
   path: [],
   contextFolder: null,
@@ -107,7 +108,7 @@ const foldersSlice = createSlice({
       state.folders[payload.id] = payload;
       state.currentFolder = payload;
     });
-    //eenameFolder
+    //renameFolder
     builder.addCase(renameFolderAsync.pending, (state) => {
       handleStateStatus(state, "pending", "renameFolder");
     });
@@ -117,21 +118,48 @@ const foldersSlice = createSlice({
     builder.addCase(renameFolderAsync.fulfilled, (state, action) => {
       const folder = action.payload;
       handleStateStatus(state, "fulfilled", "renameFolder");
-      //need to implement binary search
-      if (state.currentFolder) {
-        state.currentFolder.children = state.currentFolder?.children.map(
-          (child) => {
-            if (child.id === folder.id) return folder;
-            return child;
-          }
+
+      const index = state.folders[folder.parentId!].children.findIndex(
+        (child) => child.id === folder.id
+      );
+      if (index === -1) return;
+      state.folders[folder.parentId!].children[index] = folder;
+
+      if (state.currentFolder?.children[index].id === folder.id) {
+        state.currentFolder.children[index] = folder;
+      }
+      return state;
+    });
+
+    //deleteFolder
+    builder.addCase(deleteFolderAsync.pending, (state) => {
+      handleStateStatus(state, "pending", "deleteFolder");
+    });
+    builder.addCase(deleteFolderAsync.rejected, (state, action) => {
+      handleStateStatus(state, "rejected", "deleteFolder", action.error);
+    });
+    builder.addCase(deleteFolderAsync.fulfilled, (state, action) => {
+      handleStateStatus(state, "fulfilled", "deleteFolder");
+      const { deletedFolders, contextFolder } = action.payload;
+
+      //delete all deleted folders including the contextFolder
+      deletedFolders.forEach((folder) => {
+        if (state.folders[folder.id]) {
+          delete state.folders[folder.id];
+        }
+      });
+
+      //remove the contextFolder from its parent
+      state.folders[contextFolder.parentId!].children = state.folders[
+        contextFolder.parentId!
+      ].children.filter((child) => child.id !== contextFolder.id);
+
+      //remove the contextFolder from its parent if its parent is the parent of contextFolder
+      if (state.currentFolder?.id === contextFolder.parentId) {
+        state.currentFolder.children = state.currentFolder.children.filter(
+          (child) => child.id !== contextFolder.id
         );
       }
-      state.folders[folder.parentId!].children = state.folders[
-        folder.parentId!
-      ].children.map((child) => {
-        if (child.id === folder.id) return folder;
-        return child;
-      });
       return state;
     });
   },
@@ -142,6 +170,7 @@ export const {
   getFolderChildrenAsync,
   getFolderAsync,
   renameFolderAsync,
+  deleteFolderAsync,
 } = foldersThunks;
 export const {
   setCurrentFolder,
@@ -152,7 +181,11 @@ export const {
 } = foldersSlice.actions;
 export default foldersSlice.reducer;
 
-export type FolderMethods = "addFolder" | "getFolderChildren" | "renameFolder";
+export type FolderMethods =
+  | "addFolder"
+  | "getFolderChildren"
+  | "renameFolder"
+  | "deleteFolder";
 
 function handleStateStatus(
   state: FolderStateType,

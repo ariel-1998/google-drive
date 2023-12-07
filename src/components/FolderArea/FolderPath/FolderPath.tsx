@@ -37,6 +37,7 @@ const FolderPath: React.FC<FolderPathProps> = ({ folderId }) => {
     }
   }, [currentFolder]);
 
+  console.log(path);
   return (
     <div className={styles.breadCrumbsContainer}>
       {

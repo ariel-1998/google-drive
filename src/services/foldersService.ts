@@ -1,6 +1,7 @@
 import { FolderModel, FolderModelWithoutId } from "../models/FolderModel";
 import {
   createFolderAsync,
+  deleteFolderAsync,
   getFolderAsync,
   getFolderChildrenAsync,
   renameFolderAsync,
@@ -28,6 +29,10 @@ class FoldersService {
 
   renameFolder(folder: FolderModel, newName: string) {
     store.dispatch(renameFolderAsync({ folder, newName }));
+  }
+
+  deleteFolder(folder: FolderModel) {
+    store.dispatch(deleteFolderAsync(folder));
   }
 }
 
