@@ -19,20 +19,6 @@ type FolderStateType = {
   path: Path[];
 };
 
-///////////// TRY TO MAKE THE STATE OBJECT FOLDER CHILDREN AN OBJECT INSTEAD OF AN ARRAY
-// const initialState = {
-//   // ...
-//   folders: {
-//     // other folders...
-//     [folder.id]: {
-//       ...folder,
-//       children: folder.children.reduce((acc, child) => {
-//         acc[child.id] = child;
-//         return acc;
-//       }, {}),
-//     },
-//   },}
-
 export const ROOT_FOLDER: FolderModel = {
   id: "",
   name: "Root",
@@ -172,6 +158,7 @@ export const {
   renameFolderAsync,
   deleteFolderAsync,
 } = foldersThunks;
+
 export const {
   setCurrentFolder,
   resetFolderActionState,

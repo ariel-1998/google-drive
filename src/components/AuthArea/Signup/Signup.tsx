@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./style.module.css";
 import { useForm } from "react-hook-form";
 import { userService } from "../../../services/userService";
@@ -16,10 +16,6 @@ import Spinner from "../../Custom/Spinner/Spinner";
 import useFirestoreError from "../../../hooks/useFirestoreError";
 import useResetActionState from "../../../hooks/useResetActionState";
 
-//need to validate that there is such email before sgining up
-/////////
-/////////////
-////////////
 const Signup: React.FC = () => {
   const { error, isLoading } = useSelector(
     (state: RootState) => state.user.actions.register

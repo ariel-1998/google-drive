@@ -4,7 +4,6 @@
   display: grid;
   place-items: center;
   width: max-content;
-  /* width: fit-content; */
   border-radius: 5px;
   color: var(--folder-color);
   font-size: 35px;
@@ -14,7 +13,6 @@
 
 .addFolder:hover {
   box-shadow: 0 0 5px var(--folder-color);
-  /* background-color: #12b81a; */
   background-color: var(--folder-color);
   color: #fff;
 }
@@ -30,7 +28,6 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* animation: showModal 500ms ease-in-out forwards; */
 }
 
 .modal.show {

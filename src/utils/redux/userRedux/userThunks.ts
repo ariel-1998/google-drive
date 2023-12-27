@@ -15,6 +15,8 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
+import { deleteFolderWithChildren } from "../foldersRedux/foldersThunks";
+import { ROOT_FOLDER } from "../foldersRedux/foldersSlice";
 
 class UserThunks {
   registerAsync = createAsyncThunk(
@@ -53,7 +55,7 @@ class UserThunks {
       if (!user) throw new Error("Unauthenticated, Please Login again.");
 
       const { email: newEmail, password } = credentials;
-      const credential = EmailAuthProvider.credential(user?.email!, password);
+      const credential = EmailAuthProvider.credential(user.email!, password);
       await reauthenticateWithCredential(user!, credential);
       await verifyBeforeUpdateEmail(user, newEmail, {
         url: import.meta.env.VITE_WEBSITE_BASE_URL,
@@ -64,9 +66,10 @@ class UserThunks {
     "user/updatePasswordAsync",
     async (passwords: UpdatePassword) => {
       const user = auth.currentUser;
+      if (!user) throw new Error("User not logged in!");
       const { newPassword, currentPassword } = passwords;
       const credential = EmailAuthProvider.credential(
-        user?.email!,
+        user.email!,
         currentPassword
       );
 
@@ -107,6 +110,7 @@ class UserThunks {
       if (!user) throw new Error("User not logged in!");
       const credential = EmailAuthProvider.credential(user.email!, password);
       await reauthenticateWithCredential(user, credential);
+      await deleteFolderWithChildren(ROOT_FOLDER);
       await user.delete();
     }
   );

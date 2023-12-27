@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FolderModel } from "../../../../models/FolderModel";
 import Modal from "../../../Custom/Modal/Modal";
 import styles from "./style.module.css";
@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../utils/redux/store";
 import useFirestoreError from "../../../../hooks/useFirestoreError";
 import useResetActionState from "../../../../hooks/useResetActionState";
+
 type DeleteFolderModalProps = {
   folder: FolderModel;
   closeModal(): void;

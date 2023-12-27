@@ -20,28 +20,30 @@
 .list {
   position: absolute;
   top: -500%;
-  right: 78%;
+  right: -7%;
   border-radius: 5px;
   font-size: 1.1rem;
   font-weight: bold;
   background-color: #fff;
   opacity: 0;
-  padding-top: 5px;
   padding-bottom: 5px;
   transition: all 300ms ease-out;
   box-shadow: 0 2px 8px #333;
   outline: none;
-  max-height: 50dvh;
-  overflow: hidden;
+  max-height: 80dvh;
+  overflow: auto;
   margin-right: 50px;
   z-index: 20;
 }
 
 .list.active {
   opacity: 1;
-  top: 50%;
+  top: 60%;
 }
 
+.list::-webkit-scrollbar {
+  display: none;
+}
 .listItem,
 .logoutBtn {
   width: 100%;
@@ -55,6 +57,13 @@
 
 .listItem:not(.listHeader):hover {
   background-color: rgba(167, 158, 158, 0.333);
+}
+
+.headerWrapper {
+  padding-top: 5px;
+  position: sticky;
+  top: 0;
+  background-color: inherit;
 }
 
 .listItem.listHeader {

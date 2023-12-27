@@ -6,7 +6,7 @@
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  padding-inline: 15px;
+  padding-inline: 5px;
   z-index: 1;
   box-shadow: 0 0 5px black;
 }
@@ -15,4 +15,9 @@
   font-size: min(14vw, 3rem);
   text-decoration: none;
   color: white;
+}
+
+.headerBtns {
+  display: flex;
+  gap: 5px;
 }

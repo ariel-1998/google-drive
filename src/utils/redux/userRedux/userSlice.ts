@@ -190,8 +190,7 @@ export type AuthMethods =
   | "updateProfileImageAsync"
   | "deleteAccount";
 
-export function handleStateStatus( //check if i can combine both functions into 1 in both slices
-  // state.actions: T  instead of state
+export function handleStateStatus(
   state: UserStateObj,
   status: Status,
   method: AuthMethods,

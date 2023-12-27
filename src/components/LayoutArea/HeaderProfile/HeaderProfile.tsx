@@ -5,6 +5,7 @@ import { RootState } from "../../../utils/redux/store";
 import { FaAngleDown, FaSignOutAlt } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useFiles } from "../../../context/FilesProvider";
+import profile from "../../../assets/profile.png";
 
 const HeaderProfile: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -45,14 +46,16 @@ const HeaderProfile: React.FC = () => {
         <FaAngleDown />
       </i>
       {/**need to add defaulte image if no src */}
-      <img className={styles.image} src={user?.photoURL || ""} />
+      <img className={styles.image} src={user?.photoURL || profile} />
       <div
         ref={listRef}
         onClick={(e) => e.stopPropagation()}
         className={`${styles.list} ${menuOpen && styles.active}`}
       >
-        <ListItem className={styles.listHeader}>Settings</ListItem>
-        <hr className={styles.divider} id="divider" />
+        <div className={styles.headerWrapper}>
+          <ListItem className={styles.listHeader}>Settings</ListItem>
+          <hr className={styles.divider} id="divider" />
+        </div>
         <Link to="/update/email" onClick={closeMenu}>
           <ListItem>Update Email</ListItem>
         </Link>

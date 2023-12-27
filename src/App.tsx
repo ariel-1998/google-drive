@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Login from "./components/AuthArea/Login/Login";
 import { auth } from "./utils/firebaseConfig";
-import { changeUser } from "./utils/redux/userRedux/userSlice";
+import {
+  changeUser,
+  resetAuthStateOnLogout,
+} from "./utils/redux/userRedux/userSlice";
 import Signup from "./components/AuthArea/Signup/Signup";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import UnauthLayoutContainer from "./components/UnauthedLayoutArea/LayoutContainer/UnauthLayoutContainer";
@@ -12,7 +15,10 @@ import Layout from "./components/LayoutArea/Layout/Layout";
 import UpdateEmail from "./components/AuthArea/UpdateEmail/UpdateEmail";
 import UpdatePassword from "./components/AuthArea/UpdatePassword/UpdatePassword";
 import Dashboard from "./components/LayoutArea/Dashboard/Dashboard";
-import { ROOT_FOLDER } from "./utils/redux/foldersRedux/foldersSlice";
+import {
+  ROOT_FOLDER,
+  resetFolderStateOnLogout,
+} from "./utils/redux/foldersRedux/foldersSlice";
 import UpdateProfile from "./components/AuthArea/UpdateProfile/UpdateProfile";
 import FilesProvider from "./context/FilesProvider";
 import DeleteAccount from "./components/AuthArea/DeleteAccount/DeleteAccount";
@@ -26,6 +32,10 @@ function App() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       dispatch(changeUser(user));
+      if (!user) {
+        dispatch(resetAuthStateOnLogout());
+        dispatch(resetFolderStateOnLogout());
+      }
       //when user is defined setting the rootFolderId = user.uid
       ROOT_FOLDER.id = user?.uid || "";
       setLoading(false);

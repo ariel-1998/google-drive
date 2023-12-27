@@ -18,13 +18,6 @@ type FolderProps = {
 const Folder: React.FC<FolderProps> = ({ folder }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  {
-    /*
-  the reason i take path from cahe is if i update folder name it wont be updated for the children,
-  it will be expensive to cycle through them, so instead i teke the path and the current folder name 
-  and update the path accordingly
-*/
-  }
   const { path } = useSelector((state: RootState) => state.folders);
   const setFolder = () => {
     //passing new path state to new route to update path in redux automaticly with no delay
@@ -69,7 +62,6 @@ const Folder: React.FC<FolderProps> = ({ folder }) => {
         <i className={styles.icon}>
           <FaFolder />
         </i>
-        {/** need to limit string length to and add dots instead */}
         <span className={styles.folderName}>{folder.name}</span>
       </div>
     </>

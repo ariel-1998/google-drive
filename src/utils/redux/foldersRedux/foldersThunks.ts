@@ -4,7 +4,7 @@ import {
   FolderModelWithoutId,
   Path,
 } from "../../../models/FolderModel";
-import { auth, db, dbCollectionRefs } from "../../firebaseConfig";
+import { auth, db, dbCollectionRefs, storage } from "../../firebaseConfig";
 import {
   QuerySnapshot,
   addDoc,
@@ -18,52 +18,15 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
+import { FileModel } from "../../../models/FileModel";
+import { ROOT_FOLDER } from "./foldersSlice";
 
 class FoldersThunks {
-  private async queryFoldersBasedOnPath(
-    collection: typeof dbCollectionRefs.folders,
-    path: Path | { id: string },
-    userId: string
-  ) {
-    const q = query(
-      collection,
-      where("path", "array-contains", path),
-      where("userId", "==", userId)
-    );
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot;
-  }
-
-  private async deleteDocsBasedOnPath(querySnapshot: QuerySnapshot) {
-    //delete all folder Children
-    const docsDeletedArr: FolderModel[] = [];
-    if (!querySnapshot.empty) {
-      let batch = writeBatch(db);
-      let docCounter = 0;
-
-      for (const doc of querySnapshot.docs) {
-        //store all the folders that ar deleted in an object to delete thei file children
-        batch.delete(doc.ref);
-        docCounter++;
-        docsDeletedArr.push({ ...doc.data(), id: doc.id } as FolderModel);
-        if (docCounter === 499) {
-          docCounter = 0;
-          await batch.commit();
-          batch = writeBatch(db);
-        }
-      }
-      //check if last round was less than 500 then commit batch
-      if (docCounter > 0) {
-        await batch.commit();
-      }
-    }
-    return docsDeletedArr;
-  }
-
   private async getFolderChildren(folder: FolderModel) {
-    const userId = auth.currentUser?.uid;
-
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in!");
+    const userId = user.uid;
     const q = query(
       dbCollectionRefs.folders,
       where("userId", "==", userId),
@@ -120,15 +83,9 @@ class FoldersThunks {
       const folderRef = dbCollectionRefs.folersDocRef(id);
       const rename: Partial<FolderModel> = { name: newName };
       await updateDoc(folderRef, rename);
-      {
-        /**
-      update all childrenFolders to have the new name it there path so when going
-      to a page with url so the first path that displaed will be with the correct names
-    */
-      }
       const pathToSearch: Path = { id, name };
 
-      const querySnapshot = await this.queryFoldersBasedOnPath(
+      const querySnapshot = await queryFoldersBasedOnPath(
         dbCollectionRefs.folders,
         pathToSearch,
         user.uid
@@ -167,36 +124,87 @@ class FoldersThunks {
 
   deleteFolderAsync = createAsyncThunk(
     "files/deleteFolderAsync",
-    async (folder: FolderModel) => {
-      //delete everything from folders where folder.path includes folder.id and userId == user.uid
-      const user = auth.currentUser;
-      if (!user) throw new Error("User not logged in!");
-      // const path: Path = {id: folder.id}
-      const { id, name } = folder;
-      const folderPathToSearch: Path = { id, name };
-
-      const queryFoldersSnapshot = await this.queryFoldersBasedOnPath(
-        dbCollectionRefs.folders,
-        folderPathToSearch,
-        user.uid
-      );
-      await deleteDoc(dbCollectionRefs.folersDocRef(id));
-      const deletedFolders = await this.deleteDocsBasedOnPath(
-        queryFoldersSnapshot
-      );
-
-      //and delete all from files based on path
-      const queryFilesSnapshot = await this.queryFoldersBasedOnPath(
-        dbCollectionRefs.files,
-        { id },
-        user.uid
-      );
-
-      await this.deleteDocsBasedOnPath(queryFilesSnapshot);
-      deletedFolders.push(folder);
-      return { deletedFolders, contextFolder: folder };
-    }
+    (folder: FolderModel) => deleteFolderWithChildren(folder)
   );
 }
 
 export const foldersThunks = new FoldersThunks();
+
+export async function deleteFolderWithChildren(folder: FolderModel) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("User not logged in!");
+
+  const { id, name } = folder;
+  const isRootFolder = id === ROOT_FOLDER.id;
+
+  const folderPathToSearch: Path = { id, name };
+
+  const queryFoldersSnapshot = await queryFoldersBasedOnPath(
+    dbCollectionRefs.folders,
+    folderPathToSearch,
+    user.uid
+  );
+
+  !isRootFolder && (await deleteDoc(dbCollectionRefs.folersDocRef(id)));
+  const deletedFolders = await deleteDocsBasedOnPath(queryFoldersSnapshot);
+
+  const queryFilesSnapshot = await queryFoldersBasedOnPath(
+    dbCollectionRefs.files,
+    { id },
+    user.uid
+  );
+
+  await deleteDocsBasedOnPath(queryFilesSnapshot, true);
+
+  !isRootFolder && deletedFolders.push(folder);
+  return { deletedFolders, contextFolder: folder };
+}
+
+async function queryFoldersBasedOnPath(
+  collection: typeof dbCollectionRefs.folders,
+  path: Path | { id: string },
+  userId: string
+) {
+  const q = query(
+    collection,
+    where("path", "array-contains", path),
+    where("userId", "==", userId)
+  );
+
+  const querySnapshot = await getDocs(q);
+  return querySnapshot;
+}
+
+async function deleteDocsBasedOnPath(
+  querySnapshot: QuerySnapshot,
+  removeFilesFromStorage?: boolean
+) {
+  const docsDeletedArr: FolderModel[] = [];
+
+  if (!querySnapshot.empty) {
+    let batch = writeBatch(db);
+    let docCounter = 0;
+
+    for (const doc of querySnapshot.docs) {
+      if (removeFilesFromStorage) {
+        const fileUrl = (doc.data() as FileModel).url;
+        const fileRef = ref(storage, fileUrl);
+        await deleteObject(fileRef);
+      }
+      batch.delete(doc.ref);
+      docCounter++;
+
+      docsDeletedArr.push({ ...doc.data(), id: doc.id } as FolderModel);
+      if (docCounter === 499) {
+        docCounter = 0;
+        await batch.commit();
+        batch = writeBatch(db);
+      }
+    }
+    //check if last round was less than 500 then commit batch
+    if (docCounter > 0) {
+      await batch.commit();
+    }
+  }
+  return docsDeletedArr;
+}

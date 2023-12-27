@@ -45,12 +45,11 @@ const UpdateProfile: React.FC = () => {
     resolver: zodResolver(userProfileSchema),
   });
 
-  const submitUpdateName = (data: UserProfileForm) => {
+  const submitUpdateName = async (data: UserProfileForm) => {
     if (!user?.uid) return;
     if (data.name !== user.displayName) {
-      userService.updateName(data.name || "");
+      await userService.updateName(data.name || "");
     }
-    //might need to optimize image before uploading
     if (!data.image?.[0]) return;
     setPostingImage(true);
     uploadImageFile(user.uid, data.image[0])
@@ -87,8 +86,6 @@ const UpdateProfile: React.FC = () => {
       {errors.name && (
         <div className={styles.errorMsg}>{errors.name.message}</div>
       )}
-      {/** need to add possibility to delete profile image */}
-      {/** i will add a checkbox to remove profile image*/}
       <Input
         type="file"
         placeholder="Update Profile..."

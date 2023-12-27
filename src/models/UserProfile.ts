@@ -24,8 +24,6 @@ export const userProfileSchema = z.object({
       if (name.length < 2 || name.length > 10) return false;
       return true;
     }),
-  // .min(2, "Must contain 2-10 chracters")
-  // .max(10, "Must contain 2-10 chracters"),
   image,
 });
 

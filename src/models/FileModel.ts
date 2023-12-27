@@ -1,5 +1,4 @@
 import { FieldValue, Timestamp } from "firebase/firestore";
-import { Path } from "./FolderModel";
 
 export type FileModel = {
   id?: string;

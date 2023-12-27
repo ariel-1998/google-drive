@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./style.module.css";
 import { FileModel } from "../../../models/FileModel";
 import { FaFile } from "react-icons/fa";

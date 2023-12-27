@@ -3,7 +3,7 @@ import styles from "./style.module.css";
 
 type ButtonProps = {
   className?: string;
-  theme: "primary" | "secondary" | "danger" | "authPrimary";
+  theme?: "primary" | "secondary" | "danger" | "authPrimary";
 } & React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
@@ -14,7 +14,7 @@ const Button: React.FC<ButtonProps> = ({ className, theme, ...rest }) => {
     (theme === "primary" && styles.primary) ||
     (theme === "secondary" && styles.secondary) ||
     (theme === "danger" && styles.danger) ||
-    styles.authPrimary;
+    (theme === "danger" && styles.authPrimary);
   return (
     <button
       className={`${inputStyle} ${styles.button} ${className}`}

@@ -56,12 +56,7 @@ const FolderPath: React.FC<FolderPathProps> = ({ folderId }) => {
                 </div>
               );
             }
-            return (
-              <span key={p.id}>
-                {/** need to limit path amountand show only a part */}
-                {p?.name}
-              </span>
-            );
+            return <span key={p.id}>{p?.name}</span>;
           })}
         </>
       }

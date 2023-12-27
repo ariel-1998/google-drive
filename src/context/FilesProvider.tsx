@@ -353,7 +353,6 @@ const FilesProvider: React.FC = () => {
       }
       await deleteDoc(fileDoc);
     } catch (error) {
-      // set file to what they were before the filtering
       setFiles(files);
       throw error;
     }

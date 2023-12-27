@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef } from "react";
 import styles from "./style.module.css";
 import Button from "../../Custom/Button/Button";
 import Spinner from "../../Custom/Spinner/Spinner";
@@ -13,7 +13,6 @@ import {
 import Input from "../../Custom/Input/Input";
 import useFirestoreError from "../../../hooks/useFirestoreError";
 import { toastService } from "../../../services/toastService";
-import useResetActionState from "../../../hooks/useResetActionState";
 import { resetFolderActionState } from "../../../utils/redux/foldersRedux/foldersSlice";
 
 type AddFolderFormProps = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, MouseEvent } from "react";
+import React, { useState } from "react";
 import { FileState, useFiles } from "../../../context/FilesProvider";
 import styles from "./style.module.css";
 import { AiOutlineClose } from "react-icons/ai";
