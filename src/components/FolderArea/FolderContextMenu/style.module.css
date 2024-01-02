@@ -2,14 +2,22 @@
   position: fixed;
   background-color: #fff;
   border: 1px solid #bbbbbb77;
-  padding: 8px;
+  padding: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   list-style: none;
-  padding: 10px;
+  border-radius: 5px;
   font-size: 1.1rem;
 }
 
 .list > li {
   font-family: roboto;
   white-space: nowrap;
+  padding-inline: 10px;
+  padding-block: 8px;
+  cursor: pointer;
+  transition: background-color 100ms ease-in-out;
+}
+
+.list > li:hover {
+  background-color: #bbbbbb77;
 }

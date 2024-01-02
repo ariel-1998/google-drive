@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import styles from "./style.module.css";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../utils/redux/store";
 import {
